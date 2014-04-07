@@ -8,8 +8,12 @@
 module.exports = {
 
 	attributes: {
+		clave : {
+			unique : true,
+			index : true
+		}
 
-
-	}
+	},
+	migrate : 'safe',
 
 };

@@ -18,6 +18,8 @@ pub-74573675084915787708
 http://dsiapps.semarnat.gob.mx/gaceta/archivos2014/gaceta_14-14.pdf
 http://tramites.semarnat.gob.mx/index.php/component/content/article?id=216
 
+test mia 23QR2013MD095
+
  */
 
 var Scribd = require('node-scribd-client');
@@ -29,6 +31,7 @@ var Spooky = require('spooky');
 require('async');
 var dir = 'assets/gacetas/';
 var counter = 1;
+var counter2 = 1;
 
 module.exports = {
 	
@@ -62,7 +65,7 @@ module.exports = {
 			});
 		});
 	},
-	downloadMias : function(req,res){
+	downloadGacetas : function(req,res){
 		Gaceta.find({},function(e,gacetas){
 			if(e) throw(e);
 			async.mapSeries(gacetas,function(g,c){download(g.pdf,c)},function(e,gacetas){
@@ -79,81 +82,93 @@ module.exports = {
 		})
 	},
 	mia : function(req,res){
-		Mia.find({clave:req.param('id')},function(e,mia){
+		/*scrapeMia(req.param('id'),function(e,m){
 			if(e) throw(e);
-			scrapeMia(mia,function(e,m){
+			//console.log(m);
+			res.json(m);
+		})*/
+		Mia.find({},function(e,mias){
+			if(e) throw(e);
+			async.mapLimit(mias,1,scrapeMia,function(e,m){
 				if(e) throw(e);
-				res.send(m);
+				res.json(m);
 			});
 		});
 	}
 };
 var scrapeMia = function(mia,callback){
-	var spooky = new Spooky( {
-	    child: {
-	        transport: 'http'
-	    },
-	    casper: {
-	        logLevel: 'debug',
-	        verbose: true
-	    }
-	},function (err){
-	    if (err) {
-	    	throw(err);
-	        e = new Error('Failed to initialize SpookyJS');
-	        e.details = err;
-	        throw e;
-	    }
-	   // spooky.start('http://tramites.semarnat.gob.mx/index.php/consulta-tu-tramite');
-	    /*spooky.then(function () {
-	        this.emit('hello', 'Hello, from ' + this.evaluate(function () {
-	            return document.title;
-	        }));
-	    });*/
-	    //spooky.run();
-	});
-
-	/*
-	spooky.on('error', function (e, stack) {
-	    console.error(e);
-	    if (stack) {
-	        console.log(stack);
-	    }
-	});
-	// Uncomment this block to see all of the things Casper has to say.
-	// There are a lot.
-	// He has opinions.
-	spooky.on('console', function (line) {
-	    console.log(line);
-	});
-
-	spooky.on('hello', function (greeting) {
-	    console.log(greeting);
-	    callback(null,greeting);
-	});
-
-	spooky.on('log', function (log) {
-	    if (log.space === 'remote') {
-	       console.log(log.message.replace(/ \- ./, ''));
-	    }
-	});
-	*/
-	/*request({
-	method: 'GET',
-	url:'http://app1.semarnat.gob.mx/consultatramite/estado.php',
-	headers : {
-		'User-agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.154 Safari/537.36',
-		'Host' : 'app1.semarnat.gob.mx',
-		'Origin': 'http://app1.semarnat.gob.mx',
-		'Referer' : 'http://app1.semarnat.gob.mx/consultatramite/inicio.php',
-		'Cookie' : '__utma=197994925.1127164311.1396369129.1396372558.1396374869.3; __utmc=197994925; __utmz=197994925.1396369129.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)',
-		'Content-Type': 'application/x-www-form-urlencoded'
-	},*/
-	/*qs : {
-		'_idBitacora' : mia.clave
-	}*/
-
-
+//	console.log(mia.proyecto);
+	if(!mia.proyecto){
+		var spooky = new Spooky({
+		    child: {transport: 'http'},
+		    casper: {
+		        logLevel: 'debug',
+		        verbose: true,
+		    }
+		}, function (err) {
+		    if (err) {
+		        e = new Error('Failed to initialize SpookyJS');
+		        e.details = err;
+		        throw e;
+		    }	
+		    spooky.start('http://app1.semarnat.gob.mx/consultatramite/inicio.php');
+		    spooky.then([{
+		    	mia : mia.clave
+		    },function (){
+		    	this.evaluate(function(_mia) {
+				    document.querySelector('input[name="_idBitacora"]').value = _mia;
+				    document.querySelector('input[name="listadoarea2_r12_c8"]').click();
+				}, mia);
+		    }]);
+		    spooky.then([{
+		    	mia : mia
+		    },function(){
+		    //	console.log('loaded  search');
+		        this.emit('loaded_mia', this.evaluate(function (){
+		            return document.documentElement.outerHTML;
+		        }),mia);
+		    }]);
+		    spooky.run();
+		});
+		spooky.on('error', function (e, stack) {
+		    console.error(e);
+		    if(stack) console.log(stack);
+		});
+		//spooky.on('console', function (line){console.log(line);});
+		spooky.on('loaded_mia',function (body,mia){
+			console.log('prossesing: 	'+mia.clave);
+		    $ = cheerio.load(body);
+		    var textos = [];
+		   	$('.texto_espacio').each(function(){
+		   		textos.push($(this).text());
+		   	})
+		   	if(textos.length){
+			    var general = $('.texto_espacio').eq(0).children().html().split('<br>');
+		    	var resumen = $('a[href*="wResumenes"]');
+		    	var estudio = $('a[href*="wEstudios"]');
+		    	var resolutivo = $('a[href*="wResolutivos"]');
+			    var mia = {
+			    	estado : $(".tit_menu").text().replace('Num. ','').trim(),
+			    	tramite : general[1].trim(),
+			    	proyecto : general[3].replace('Proyecto: ',''),
+			    	clave : general[5].replace('Num. Proyecto: ','').trim(),
+			    	entidad : $('.texto_espacio').eq(2).text().trim(),
+			    	fecha_de_ingreso : $('.texto_espacio').eq(3).text().trim(),
+			    	situacion_actual : $('textarea.texto_espacio').val().trim(),
+			    	resumen : resumen.length ? resumen.attr('href').replace("javascript:abrirPDF('",'').replace("','wResumenes')",'') : false,
+			    	estudio : estudio.length ? estudio.attr('href').replace("javascript:abrirPDF('",'').replace("','wEstudios')",'') : false,
+			    	resolutivo : resolutivo.length ? resolutivo.attr('href').replace("javascript:abrirPDF('",'').replace("','wResolutivos')",'') : false,
+			    }
+			    console.log('proccesed	'+mia.clave+'	'+counter++);
+			    Mia.update({clave:mia.clave},mia,callback);
+			}else{
+				console.log('orphaned	'+mia.clave+'	'+counter2++);
+				Mia.update({clave:mia.clave},{clave:mia.clave,orphaned:true},callback);
+			}
+		});
+	}else{
+		console.log('found	'+mia.clave+'	'+counter++);
+	}
 }
 var scrapeMias = function(gaceta,callback){
 	var aux = gaceta.pdf.split('/');
