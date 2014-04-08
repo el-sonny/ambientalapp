@@ -19,6 +19,9 @@
  */
 
 // Ensure a "sails" can be located:
+
+process.chdir(__dirname);
+
 var sails;
 try {
 	sails = require('sails');
