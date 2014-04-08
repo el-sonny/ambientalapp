@@ -67,7 +67,7 @@ module.exports = {
 	},
 	downloadGacetas : function(req,res){
 		Gaceta.find({},function(e,gacetas){
-			if(e) throw(e);
+			if(e) throw(e);	
 			async.mapSeries(gacetas,function(g,c){download(g.pdf,c)},function(e,gacetas){
 				res.json(gacetas);
 			})
@@ -92,6 +92,19 @@ module.exports = {
 			async.mapLimit(mias,1,scrapeMia,function(e,m){
 				if(e) throw(e);
 				res.json(m);
+			});
+		});
+	},
+	downloadMias : function(req,res){
+		dir = 'assets/mias/estudios/';
+		Mia.find({entidad:'Quintana Roo',estudio:{endsWith:'.pdf'}}).limit().done(function (e,mias){
+			async.mapSeries(mias,function(m,c){downloadWget(m.estudio,c)},function(e,files){
+				if(e) throw(e);
+				files.forEach(function(file,i){
+					mias[i].estudio_file = dir+file;
+					mias[i].save();
+				});
+				res.json(files);
 			});
 		});
 	}
@@ -207,24 +220,51 @@ var scrapeGacetas = function(year,callback){
 				numero : $(this).text().trim(),
 			});
 		})
+		dir = 'assets/gacetas/';
 		async.map(gacetas,function(g,c){Gaceta.findOrCreate(g,g,c)},callback);
 	});
 }
-var download = function(url, cb) {
-	var options = {
-		uri: url,
-		headers: {'user-agent': 'Mozilla/5.0'},
-	}
+var download = function(url, cb){	
 	var fname = url.split('/');
 	fname = fname[fname.length -1];
 	if(fs.existsSync(dir+fname)){
 		console.log('exists: '+counter++);
 		cb(null,fname);
 	}else{
-		var req = request(options).pipe(fs.createWriteStream(dir+fname)).on('finish',function(){
+		var options = {
+			uri: url,
+			headers: {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:15.0) Gecko/20120427 Firefox/15.0a1'},
+			method: "HTTP",
+		}
+		console.log('downloading: '+url);
+		var req = request(options).pipe(fs.createWriteStream(dir+fname)).on('finish',function(e,res,body){
+			if(e) cb(e,fname);
+			console.log(res);
 			//fs.close();
 			console.log('downloaded :'+counter++);
 			cb(null,fname);
 		});
 	}
+}
+var downloadWget = function(url,cb){	
+	var fname = url.split('/');
+	fname = fname[fname.length -1];
+	console.log('downloading '+fname);
+	var util = require('util'),
+	    exec = require('child_process').exec,
+	    child,
+
+	child = exec('wget -O '+dir+fname +' '+ url,
+	  function (error, stdout, stderr) {
+	    // console.log('stdout: ' + stdout);
+	    // console.log('stderr: ' + stderr);
+	    if (error !== null) {
+	      console.log('exec error: ' + error);
+	      cb(error,url);
+	    }
+	});
+	child.on('exit',function(){
+		console.log('downloaded: '+fname);
+		cb(null,dir+fname);
+	})
 }
