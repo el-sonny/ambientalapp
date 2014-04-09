@@ -149,7 +149,8 @@ var scrapeMia = function(mia,callback){
 		});
 		//spooky.on('console', function (line){console.log(line);});
 		spooky.on('loaded_mia',function (body,mia){
-			console.log('prossesing: 	'+mia.clave);
+			var timestamp = '[' + Date.now() + '] ';
+			console.log(timestamp+'	prossesing: 	'+mia.clave);
 		    $ = cheerio.load(body);
 		    var textos = [];
 		   	$('.texto_espacio').each(function(){
@@ -172,7 +173,8 @@ var scrapeMia = function(mia,callback){
 			    	estudio : estudio.length ? estudio.attr('href').replace("javascript:abrirPDF('",'').replace("','wEstudios')",'') : false,
 			    	resolutivo : resolutivo.length ? resolutivo.attr('href').replace("javascript:abrirPDF('",'').replace("','wResolutivos')",'') : false,
 			    }
-			    console.log('proccesed	'+mia.clave+'	'+counter++);
+			    var timestamp = '[' + Date.now() + '] ';
+			    console.log(timestamp+'	proccesed	'+mia.clave+'	'+counter++);
 			    Mia.update({clave:mia.clave},mia,callback);
 			}else{
 				console.log('orphaned	'+mia.clave+'	'+counter2++);
