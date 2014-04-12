@@ -87,7 +87,8 @@ module.exports = {
 			//console.log(m);
 			res.json(m);
 		})*/
-		Mia.find({},function(e,mias){
+		var q = req.param('id') ? {clave:req.param('id')} : {};
+		Mia.find(q,function(e,mias){
 			if(e) throw(e);
 			async.mapLimit(mias,1,scrapeMia,function(e,m){
 				if(e) throw(e);
@@ -109,6 +110,18 @@ module.exports = {
 		});
 	}
 };
+/*Error Cases*/
+/*
+26SO2010UD079
+19NL2009UD119
+
+*/
+
+var timestamp = function(){
+	var newDate = new Date();
+	newDate.setTime(Date.now()*1000);
+	return '[' +newDate.toUTCString()+ '] ';
+}
 var scrapeMia = function(mia,callback){
 	if(!mia.proyecto){
 		var spooky = new Spooky({
@@ -123,12 +136,13 @@ var scrapeMia = function(mia,callback){
 		        e.details = err;
 		        console.log(err);
 		        throw e;
-		    }	
-		    spooky.start('http://app1.semarnat.gob.mx/consultatramite/inicio.php');
+		    }
+		    console.log(timestamp()+" downloading	"+mia.clave);
+			spooky.start('http://app1.semarnat.gob.mx/consultatramite/inicio.php');
 		    spooky.then([{
 		    	mia : mia.clave
 		    },function (){
-		    	console.log('casper ok');
+		    	this.emit('loaded_search')
 		    	this.evaluate(function(_mia) {
 				    document.querySelector('input[name="_idBitacora"]').value = _mia;
 				    document.querySelector('input[name="listadoarea2_r12_c8"]').click();
@@ -137,7 +151,6 @@ var scrapeMia = function(mia,callback){
 		    spooky.then([{
 		    	mia : mia
 		    },function(){
-		    	console.log('loaded  search');
 		        this.emit('loaded_mia', this.evaluate(function (){
 		            return document.documentElement.outerHTML;
 		        }),mia);
@@ -148,18 +161,17 @@ var scrapeMia = function(mia,callback){
 		    console.error(e);
 		    if(stack) console.log(stack);
 		});
+		spooky.on('loaded_search',function (body){
+			console.log(timestamp()+' loaded search	'+mia.clave);
+		});
 		//spooky.on('console', function (line){console.log(line);});
 		spooky.on('loaded_mia',function (body,mia){
-			var newDate = new Date();
-			newDate.setTime(Date.now()*1000);
-			var timestamp = '[' +newDate.toUTCString()+ '] ';
-			console.log(timestamp+'	prossesing: 	'+mia.clave);
+			console.log(timestamp()+' prossesing	'+mia.clave);
 		    $ = cheerio.load(body);
 		    var textos = [];
 		   	$('.texto_espacio').each(function(){
 		   		textos.push($(this).text());
 		   	})
-		   //	console.log(textos);
 		   	if(textos.length){
 			    var general = $('.texto_espacio').eq(0).children().html().split('<br>');
 		    	var resumen = $('a[href*="wResumenes"]');
@@ -177,13 +189,11 @@ var scrapeMia = function(mia,callback){
 			    	estudio : estudio.length ? estudio.attr('href').replace("javascript:abrirPDF('",'').replace("','wEstudios')",'') : false,
 			    	resolutivo : resolutivo.length ? resolutivo.attr('href').replace("javascript:abrirPDF('",'').replace("','wResolutivos')",'') : false,
 			    }
-			    var newDate = new Date();
-				newDate.setTime(Date.now()*1000);
-				var timestamp = '[' +newDate.toUTCString()+ '] ';
-			    console.log(timestamp+'	proccesed	'+mia.clave+'	'+counter++);
+			    //console.dir(mia);
+			    console.log(timestamp()+' proccesed	'+mia.clave+'	'+counter++);
 			    Mia.update({clave:mia.clave},mia,callback);
 			}else{
-				console.log('orphaned	'+mia.clave+'	'+counter2++);
+				console.log(timestamp()+' orphaned	'+mia.clave+'	'+counter2++);
 				Mia.update({clave:mia.clave},{clave:mia.clave,orphaned:true},callback);
 			}
 		});
