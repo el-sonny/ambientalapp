@@ -68,7 +68,7 @@ module.exports = {
 	downloadGacetas : function(req,res){
 		Gaceta.find({},function(e,gacetas){
 			if(e) throw(e);	
-			async.mapSeries(gacetas,function(g,c){download(g.pdf,c)},function(e,gacetas){
+			async.mapSeries(gacetas,function(g,c){downloadWget(g.pdf,c)},function(e,gacetas){
 				res.json(gacetas);
 			})
 		})
@@ -110,7 +110,6 @@ module.exports = {
 	}
 };
 var scrapeMia = function(mia,callback){
-//	console.log(mia.proyecto);
 	if(!mia.proyecto){
 		var spooky = new Spooky({
 		    child: {transport: 'http'},
@@ -122,12 +121,15 @@ var scrapeMia = function(mia,callback){
 		    if (err) {
 		        e = new Error('Failed to initialize SpookyJS');
 		        e.details = err;
+		        console.log(err);
 		        throw e;
 		    }	
+		    console.log('spoky ok');
 		    spooky.start('http://app1.semarnat.gob.mx/consultatramite/inicio.php');
 		    spooky.then([{
 		    	mia : mia.clave
 		    },function (){
+		    	console.log('casper ok');
 		    	this.evaluate(function(_mia) {
 				    document.querySelector('input[name="_idBitacora"]').value = _mia;
 				    document.querySelector('input[name="listadoarea2_r12_c8"]').click();
@@ -136,7 +138,7 @@ var scrapeMia = function(mia,callback){
 		    spooky.then([{
 		    	mia : mia
 		    },function(){
-		    //	console.log('loaded  search');
+		    	console.log('loaded  search');
 		        this.emit('loaded_mia', this.evaluate(function (){
 		            return document.documentElement.outerHTML;
 		        }),mia);
@@ -147,7 +149,7 @@ var scrapeMia = function(mia,callback){
 		    console.error(e);
 		    if(stack) console.log(stack);
 		});
-		//spooky.on('console', function (line){console.log(line);});
+		spooky.on('console', function (line){console.log(line);});
 		spooky.on('loaded_mia',function (body,mia){
 			var timestamp = '[' + Date.now() + '] ';
 			console.log(timestamp+'	prossesing: 	'+mia.clave);
@@ -182,7 +184,8 @@ var scrapeMia = function(mia,callback){
 			}
 		});
 	}else{
-		console.log('found	'+mia.clave+'	'+counter++);
+		console.log(e);
+		//console.log('found	'+mia.clave+'	'+counter++);
 	}
 }
 var scrapeMias = function(gaceta,callback){
@@ -241,8 +244,6 @@ var download = function(url, cb){
 		console.log('downloading: '+url);
 		var req = request(options).pipe(fs.createWriteStream(dir+fname)).on('finish',function(e,res,body){
 			if(e) cb(e,fname);
-			console.log(res);
-			//fs.close();
 			console.log('downloaded :'+counter++);
 			cb(null,fname);
 		});

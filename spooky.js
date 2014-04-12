@@ -1,5 +1,4 @@
 var Spooky = require('spooky');
-
 var spooky = new Spooky({
     child: {transport: 'http'},
     casper: {
