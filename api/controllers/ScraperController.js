@@ -124,7 +124,6 @@ var scrapeMia = function(mia,callback){
 		        console.log(err);
 		        throw e;
 		    }	
-		    console.log('spoky ok');
 		    spooky.start('http://app1.semarnat.gob.mx/consultatramite/inicio.php');
 		    spooky.then([{
 		    	mia : mia.clave
@@ -149,15 +148,18 @@ var scrapeMia = function(mia,callback){
 		    console.error(e);
 		    if(stack) console.log(stack);
 		});
-		spooky.on('console', function (line){console.log(line);});
+		//spooky.on('console', function (line){console.log(line);});
 		spooky.on('loaded_mia',function (body,mia){
-			var timestamp = '[' + Date.now() + '] ';
+			var newDate = new Date();
+			newDate.setTime(Date.now()*1000);
+			var timestamp = '[' +newDate.toUTCString()+ '] ';
 			console.log(timestamp+'	prossesing: 	'+mia.clave);
 		    $ = cheerio.load(body);
 		    var textos = [];
 		   	$('.texto_espacio').each(function(){
 		   		textos.push($(this).text());
 		   	})
+		   //	console.log(textos);
 		   	if(textos.length){
 			    var general = $('.texto_espacio').eq(0).children().html().split('<br>');
 		    	var resumen = $('a[href*="wResumenes"]');
@@ -175,7 +177,9 @@ var scrapeMia = function(mia,callback){
 			    	estudio : estudio.length ? estudio.attr('href').replace("javascript:abrirPDF('",'').replace("','wEstudios')",'') : false,
 			    	resolutivo : resolutivo.length ? resolutivo.attr('href').replace("javascript:abrirPDF('",'').replace("','wResolutivos')",'') : false,
 			    }
-			    var timestamp = '[' + Date.now() + '] ';
+			    var newDate = new Date();
+				newDate.setTime(Date.now()*1000);
+				var timestamp = '[' +newDate.toUTCString()+ '] ';
 			    console.log(timestamp+'	proccesed	'+mia.clave+'	'+counter++);
 			    Mia.update({clave:mia.clave},mia,callback);
 			}else{
@@ -184,8 +188,8 @@ var scrapeMia = function(mia,callback){
 			}
 		});
 	}else{
-		console.log(e);
-		//console.log('found	'+mia.clave+'	'+counter++);
+		//console.log(e);
+		console.log('found	'+mia.clave+'	'+counter++);
 	}
 }
 var scrapeMias = function(gaceta,callback){
