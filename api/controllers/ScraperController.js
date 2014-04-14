@@ -82,16 +82,12 @@ module.exports = {
 		})
 	},
 	mia : function(req,res){
-		/*scrapeMia(req.param('id'),function(e,m){
-			if(e) throw(e);
-			//console.log(m);
-			res.json(m);
-		})*/
 		var q = req.param('id') ? {clave:req.param('id')} : {};
 		Mia.find(q,function(e,mias){
 			if(e) throw(e);
 			async.mapLimit(mias,1,scrapeMia,function(e,m){
 				if(e) throw(e);
+				console.log('done');
 				res.json(m);
 			});
 		});
@@ -198,8 +194,7 @@ var scrapeMia = function(mia,callback){
 			}
 		});
 	}else{
-		//console.log(e);
-		console.log('found	'+mia.clave+'	'+counter++);
+		console.log(timestamp()+' already processed	'+mia.clave+'	'+counter++);
 		callback(null,mia);
 	}
 }
