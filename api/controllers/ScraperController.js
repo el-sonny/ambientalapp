@@ -34,7 +34,6 @@ var counter = 1;
 var counter2 = 1;
 
 module.exports = {
-	
 	anios : function(req,res){
 		request({
 			url:'http://tramites.semarnat.gob.mx/index.php/component/content/article?id=216',
@@ -104,7 +103,18 @@ module.exports = {
 				res.json(files);
 			});
 		});
+	},
+	extractStatus : function(req,res){
+		Mia.find({situacion_actual:{'>':''}}).exec(function(e,mias){
+			if(e) throw(e);
+			console.log('found '+mias.length);
+			var statuses = [];
+			async.mapSeries(mias,processStatus,function(e,statuses){
+				res.json(statuses);
+			});
+		});
 	}
+
 };
 /*Error Cases*/
 /*
@@ -112,7 +122,15 @@ module.exports = {
 19NL2009UD119
 
 */
+var processStatus = function(mia,callback){
+	Status.findOrCreate({desc:mia.situacion_actual},{desc:mia.situacion_actual},function(e,status){
+		if(e) throw(e);
+		Mia.update({clave:mia.clave},{status:status.id},callback);
+		if(counter++ % 100 == 0) console.log(timestamp()+" processed: "+counter);
 
+		//console.log('processing: '+mia.clave);
+	});
+}
 var timestamp = function(){
 	var newDate = new Date();
 	newDate.setTime(Date.now()*1000);
