@@ -195,7 +195,7 @@ var scrapeMia = function(mia,callback){
 		});
 	}else{
 		console.log(timestamp()+' already processed	'+mia.clave+'	'+counter++);
-		callback(null,mia);
+		setImmediate(function() { callback(null,mia); });
 	}
 }
 var scrapeMias = function(gaceta,callback){
