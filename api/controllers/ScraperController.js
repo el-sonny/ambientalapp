@@ -119,7 +119,7 @@ var timestamp = function(){
 	return '[' +newDate.toUTCString()+ '] ';
 }
 var scrapeMia = function(mia,callback){
-	if(!mia.proyecto){
+	if(!mia.proyecto && !mia.orphaned){
 		var spooky = new Spooky({
 		    child: {transport: 'http'},
 		    casper: {
