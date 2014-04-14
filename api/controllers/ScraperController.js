@@ -200,6 +200,7 @@ var scrapeMia = function(mia,callback){
 	}else{
 		//console.log(e);
 		console.log('found	'+mia.clave+'	'+counter++);
+		callback(null,mia);
 	}
 }
 var scrapeMias = function(gaceta,callback){
