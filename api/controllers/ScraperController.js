@@ -56,6 +56,7 @@ module.exports = {
 			})
 		});
 	},
+	
 	gacetas : function(req,res){
 		Year.find({},function(e,years){
 			if(e) throw(e);
@@ -64,6 +65,7 @@ module.exports = {
 			});
 		});
 	},
+	
 	downloadGacetas : function(req,res){
 		Gaceta.find({},function(e,gacetas){
 			if(e) throw(e);	
@@ -72,6 +74,22 @@ module.exports = {
 			})
 		})
 	},
+	
+	downloadProjectFile : function(req,res){
+		Mia.findOne({clave:req.param('id')}).exec(function(e,mia){
+			dir = 'assets/mias/'+req.param('filetype')+'/';
+			downloadWget(mia[req.param('filetype')],function(e,file){
+				if(e) throw(e);
+				if(file){
+					mia[req.param('filetype')+'_file'] = file;
+					mia.save(function(e,mia){
+						res.json(mia);
+					});
+				};
+			});
+		});
+	},
+	
 	mias : function(req,res){
 		Gaceta.find({},function(e,gacetas){
 			async.mapSeries(gacetas,scrapeMias,function(e,g){
@@ -80,6 +98,7 @@ module.exports = {
 			})
 		})
 	},
+	
 	mia : function(req,res){
 		var q = req.param('id') ? {clave:req.param('id')} : {};
 		Mia.find(q,function(e,mias){
@@ -91,19 +110,7 @@ module.exports = {
 			});
 		});
 	},
-	downloadMias : function(req,res){
-		dir = 'assets/mias/estudios/';
-		Mia.find({entidad:'Quintana Roo',estudio:{endsWith:'.pdf'}}).limit().done(function (e,mias){
-			async.mapSeries(mias,function(m,c){downloadWget(m.estudio,c)},function(e,files){
-				if(e) throw(e);
-				files.forEach(function(file,i){
-					mias[i].estudio_file = dir+file;
-					mias[i].save();
-				});
-				res.json(files);
-			});
-		});
-	},
+	
 	extractStatus : function(req,res){
 		Mia.find({situacion_actual:{'>':''}}).exec(function(e,mias){
 			if(e) throw(e);
@@ -113,15 +120,32 @@ module.exports = {
 				res.json(statuses);
 			});
 		});
-	}
+	},
+	
+	fixDate : function(req,res){
+		Mia.find({}).exec(function(e,mias){
+			async.mapLimit(mias,20,function(mia,callback){
+				if(mia.fecha_de_ingreso){
+					if(typeof(mia.fecha_de_ingreso) == 'string'){
+						var date = mia.fecha_de_ingreso.split("/");
+						if(date.length == 3){
+							date = date[2]+'-'+date[1]+'-'+date[0];
+							mia.fecha_de_ingreso = new Date(date);
+							console.log(timestamp()+' fixing : '+mia.clave+'	'+counter++);
+							return mia.save(callback);
+						}
+					}
+				}
+				console.log(timestamp()+' correct : '+mia.clave+'	'+counter2++);
+				return setImmediate(function(){callback(null,mia);});
+			},function(e,mias){
+				res.json(mias);
+			});
+		});
+	},
 
 };
-/*Error Cases*/
-/*
-26SO2010UD079
-19NL2009UD119
 
-*/
 var processStatus = function(mia,callback){
 	Status.findOrCreate({desc:mia.situacion_actual},{desc:mia.situacion_actual},function(e,status){
 		if(e) throw(e);
@@ -131,11 +155,13 @@ var processStatus = function(mia,callback){
 		//console.log('processing: '+mia.clave);
 	});
 }
+
 var timestamp = function(){
 	var newDate = new Date();
 	newDate.setTime(Date.now()*1000);
 	return '[' +newDate.toUTCString()+ '] ';
 }
+
 var scrapeMia = function(mia,callback){
 	if(!mia.proyecto && !mia.orphaned){
 		var spooky = new Spooky({
@@ -216,6 +242,7 @@ var scrapeMia = function(mia,callback){
 		setImmediate(function() { callback(null,mia); });
 	}
 }
+
 var scrapeMias = function(gaceta,callback){
 	var aux = gaceta.pdf.split('/');
 	var filePath = dir+aux[aux.length-1];
@@ -235,6 +262,7 @@ var scrapeMias = function(gaceta,callback){
 		console.log('gacetas procesadas: '+counter++);
 	});
 }
+
 var scrapeGacetas = function(year,callback){
 	request({
 		url:'http://dsiapps.semarnat.gob.mx/gaceta/Gacetas/gaceta'+year.year+'.php',
@@ -257,6 +285,7 @@ var scrapeGacetas = function(year,callback){
 		async.map(gacetas,function(g,c){Gaceta.findOrCreate(g,g,c)},callback);
 	});
 }
+
 var download = function(url, cb){	
 	var fname = url.split('/');
 	fname = fname[fname.length -1];
@@ -277,6 +306,7 @@ var download = function(url, cb){
 		});
 	}
 }
+
 var downloadWget = function(url,cb){	
 	var fname = url.split('/');
 	fname = fname[fname.length -1];

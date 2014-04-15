@@ -15,7 +15,10 @@
 // (if you're using LESS with the built-in default config, you'll want
 //  to change `assets/styles/importer.less` instead.)
 var cssFilesToInject = [
-  'styles/**/*.css'
+  'bower_components/bootstrap/dist/css/bootstrap.min.css',
+  'styles/**/*.css',
+  //'bower_components/bootstrap/dist/css/bootstrap-theme.min.css',
+
 ];
 
 
@@ -27,21 +30,24 @@ var jsFilesToInject = [
   // linked in the proper order order
 
   // Bring in the socket.io client
-  'js/socket.io.js',
+  //'js/socket.io.js',
 
   // then beef it up with some convenience logic for talking to Sails.js
-  'js/sails.io.js',
+  //'js/sails.io.js',
 
   // finally, include a simple boilerplate script that connects a socket
   // to the Sails backend with some example code
-  'js/connection.example.js',
+  //'js/connection.example.js',
 
   //
   // *->    you might put other dependencies like jQuery or Angular here   <-*
   //
 
   // All of the rest of your app scripts
-  'js/**/*.js'
+  'bower_components/jquery/dist/jquery.min.js',
+  'bower_components/bootstrap/dist/js/bootstrap.min.js',
+  'js/**/*.js',
+
 ];
 
 

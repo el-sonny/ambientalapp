@@ -1,0 +1,85 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-3 col-md-2 sidebar">
+      <ul class="nav nav-sidebar">
+        <li class="active"><a href="#resumen">Resumen</a></li>
+        <li><a href="#documentos">Documentos</a></li>
+        <li><a href="#mapa">Mapa</a></li>
+        <li><a href="#exportar">Exportar</a></li>
+      </ul>
+    </div>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      <a name='resumen'></a>
+      <h2 class="sub-header"><%- mia.proyecto %></h2>
+      <dl class="dl-horizontal">
+        <dt>Clave</dt>
+        <dd><%- mia.clave %></dd>
+
+        <dt>Entidad</dt>
+        <dd><%- mia.entidad %></dd>
+
+        <dt>Fecha de ingreso</dt>
+        <dd><%=: mia.fecha_de_ingreso | formatDate %></dd>
+
+        <dt>Tramite</dt>
+        <dd><%- mia.tramite %></dd>
+
+        <dt>Estado Actual</dt>
+        <dd><%- mia.status.desc %> (<%- mia.estado %>)</dd>
+      </dl>
+      <hr/>
+      <a name='documentos'></a>
+      <h3>Documentos</h3>
+      <a href='<%- mia.resumen_status().link %>' type="button" class="btn btn-<%- mia.resumen_status().button %> btn-lg" <%= mia.resumen_status().disabled %>>
+        Resumen 
+        <span class="badge">
+          <%= mia.resumen_status().label %>
+        </span>
+      </a>
+      
+      <a href='<%- mia.estudio_status().link %>' type="button" class="btn btn-<%- mia.estudio_status().button %> btn-lg" <%= mia.estudio_status().disabled %>>
+        Estudio 
+        <span class="badge">
+          <%= mia.estudio_status().label %>
+        </span>
+      </a>
+      
+      <a href='<%- mia.resolutivo_status().link %>' type="button" class="btn btn-<%- mia.resolutivo_status().button %> btn-lg" <%= mia.resolutivo_status().disabled %>>
+        Resolutivo 
+        <span class="badge">
+          <%= mia.resolutivo_status().label %>
+        </span>
+      </a>
+      <hr/>
+      <a name='mapa'></a>
+      <h3>Mapa</h3>
+      <% if(mia.coordenadas){ %>
+        Bientos
+      <% }else if( mia.resumen_status().code < 2 || mia.estudio_status().code <2){ %>
+            <p class='lead'>Este proyecto no tiene informacion geoespacial indexada aun ayudanos siguiendo los siguientes pasos: </p>
+            <%
+            var check = mia.resumen_status().code  == 0 || mia.estudio_status().code  == 0 ? "" : '<span class="glyphicon glyphicon-ok"></span>';
+            %>
+            <p><strong>1.)</strong> Crear una copia de los archivos relevantes en el servidor</p>
+            
+            <% if(mia.resumen_status().code  == 1){ %>          
+                <a href='/scraper/downloadProjectFile/<%- mia.clave %>?filetype=resumen' class='download-doc btn btn-primary btn-lg' type='button' >copiar resumen</a>
+            <% }else if(mia.resumen_status().code == 0){ %>
+              <a href='' class='btn btn-success btn-lg' disabled='disabled' type='button' >resumen guardado</a>
+            <% } %>
+
+            <% if(mia.estudio_status().code  == 1){ %>          
+                <a href='/scraper/downloadProjectFile/<%- mia.clave %>?filetype=estudio' class='download-doc btn btn-primary btn-lg' type='button' >copiar estudio</a>
+            <% }else if(mia.estudio_status().code == 0){ %>
+              <a href='' class='btn btn-success btn-lg' disabled='disabled' type='button' >estudio guardado</a>
+            <% } %>
+            
+            <hr/>
+            <p><strong>2.)</strong> Tratar de extraer coordenadas de los PDFs</p>
+      <% }else{ %>
+        Este proyecto no tiene documentos disponibles, hora de meter una solicitud de informacion.  
+      <% } %>
+    </div>
+
+  </div>
+</div>

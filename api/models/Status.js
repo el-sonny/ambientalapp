@@ -12,6 +12,7 @@ module.exports = {
 			collection: 'mia',
 			via: 'status',
 		},
+		desc : 'STRING',
 
 	}
 

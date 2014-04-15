@@ -1,0 +1,74 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-3 col-md-2 sidebar">
+      <ul class="nav nav-sidebar">
+        <li class="active"><a href="#">Overview</a></li>
+        <li><a href="#">Reports</a></li>
+        <li><a href="#">Analytics</a></li>
+        <li><a href="#">Export</a></li>
+      </ul>
+    </div>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      <!-- <h1 class="page-header">Dashboard</h1>
+
+      <div class="row placeholders">
+        <div class="col-xs-6 col-sm-3 placeholder">
+          <img data-src="holder.js/200x200/auto/sky" class="img-responsive" alt="Generic placeholder thumbnail">
+          <h4>Label</h4>
+          <span class="text-muted">Something else</span>
+        </div>
+        <div class="col-xs-6 col-sm-3 placeholder">
+          <img data-src="holder.js/200x200/auto/vine" class="img-responsive" alt="Generic placeholder thumbnail">
+          <h4>Label</h4>
+          <span class="text-muted">Something else</span>
+        </div>
+        <div class="col-xs-6 col-sm-3 placeholder">
+          <img data-src="holder.js/200x200/auto/sky" class="img-responsive" alt="Generic placeholder thumbnail">
+          <h4>Label</h4>
+          <span class="text-muted">Something else</span>
+        </div>
+        <div class="col-xs-6 col-sm-3 placeholder">
+          <img data-src="holder.js/200x200/auto/vine" class="img-responsive" alt="Generic placeholder thumbnail">
+          <h4>Label</h4>
+          <span class="text-muted">Something else</span>
+        </div>
+      </div> -->
+
+      <h2 class="sub-header">Proyectos</h2>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Clave</th>
+              <th>Nombre</th>
+              <th>Entidad</th>
+              <th>Fecha de Ingreso</th>
+              <th>Estatus</th>
+            </tr>
+          </thead>
+          <tbody>
+          <% _.each(mias, function (mia) { %>
+            <tr>
+              <td><a href='/mia/perfil/<%- mia.clave %>' title=<%- mia.proyecto %>><%- mia.clave %></a></td>
+              <td><%- mia.proyecto %></td>
+              <td><%- mia.entidad %></td>
+              <td><%=: mia.fecha_de_ingreso | formatDate %></td>
+              <td><%- mia.status.desc %></td>
+            </tr>
+          <% }) %>
+            
+          </tbody>
+        </table>
+        <ul class="pagination">
+          <li><a href="#">&laquo;</a></li>
+          <li><a href="#">1</a></li>
+          <li><a href="#">2</a></li>
+          <li><a href="#">3</a></li>
+          <li><a href="#">4</a></li>
+          <li><a href="#">5</a></li>
+          <li><a href="#">&raquo;</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
