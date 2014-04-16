@@ -75,6 +75,32 @@
 
             <ul id="sample-menu" class="dropdown-menu" role="menu"><li><a href="#">Coordenada X</a></li><li><a href="#">Coordenada Y</a></li><li><a href="#">Par</a><a href="#">Nada que ver bro</a></li></ul>
 
+            <div id='search-space-sample' class='search-space row hidden'>
+              <div class='col-md-2'>
+                <p>¿Este cuadro tiene informacion de coordenadas o me estoy tripeando?</p>
+                <input type='checkbox' checked name='space-enabled' class='space-activation-checkbox' />
+                <div class='coordinates'>
+                  <hr/>
+                  <p>Preview</p>
+                  <input type='checkbox' name='space-preview' class='map-preview-checkbox' disabled/>
+                  <hr/>
+                  <p>Formato</p>
+                  <select name='coord-format' class="form-control" class='coord-format'>
+                    <option value='latlong'>latlong</option>
+                    <option value='utm' >utm</option>
+                  </select>
+                  <table class='table'>
+                    <tr><th>x</th><th>y</th></tr>
+                    <tr class='clone-row' ><td>--</td><td>--</td></tr>
+                  </table>
+                  <!-- <button type='button' class='btn btn-default'>Convertir</button> -->
+                </div>
+              </div>
+              <pre class='col-md-10 well'></pre>
+              <div class='points hidden'></div>
+              <div class='col-md-10 map hidden'></div>
+            </div>
+
       <% }else{ %>
         Este proyecto no tiene documentos disponibles, hora de meter una solicitud de informacion.  
       <% } %>
