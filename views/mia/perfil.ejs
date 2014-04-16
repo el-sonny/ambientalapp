@@ -61,21 +61,17 @@
             var check = mia.resumen_status().code  == 0 || mia.estudio_status().code  == 0 ? "" : '<span class="glyphicon glyphicon-ok"></span>';
             %>
             <p><strong>1.)</strong> Crear una copia de los archivos relevantes en el servidor</p>
+            <%- mia.resumen_status().saveButton %>
+            <%- mia.estudio_status().saveButton %>
             
-            <% if(mia.resumen_status().code  == 1){ %>          
-                <a href='/scraper/downloadProjectFile/<%- mia.clave %>?filetype=resumen' class='download-doc btn btn-primary btn-lg' type='button' >copiar resumen</a>
-            <% }else if(mia.resumen_status().code == 0){ %>
-              <a href='' class='btn btn-success btn-lg' disabled='disabled' type='button' >resumen guardado</a>
-            <% } %>
-
-            <% if(mia.estudio_status().code  == 1){ %>          
-                <a href='/scraper/downloadProjectFile/<%- mia.clave %>?filetype=estudio' class='download-doc btn btn-primary btn-lg' type='button' >copiar estudio</a>
-            <% }else if(mia.estudio_status().code == 0){ %>
-              <a href='' class='btn btn-success btn-lg' disabled='disabled' type='button' >estudio guardado</a>
-            <% } %>
             
             <hr/>
             <p><strong>2.)</strong> Tratar de extraer coordenadas de los PDFs</p>
+            <%- mia.resumen_status().openButton %>
+            <%- mia.estudio_status().openButton %>
+
+
+
       <% }else{ %>
         Este proyecto no tiene documentos disponibles, hora de meter una solicitud de informacion.  
       <% } %>
