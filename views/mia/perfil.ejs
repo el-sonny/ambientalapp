@@ -56,11 +56,12 @@
       <% if(mia.coordenadas){ %>
         Bientos
       <% }else if( mia.resumen_status().code < 2 || mia.estudio_status().code <2){ %>
-            <p class='lead'>Este proyecto no tiene informacion geoespacial indexada aun ayudanos siguiendo los siguientes pasos: </p>
-            <%
-            var check = mia.resumen_status().code  == 0 || mia.estudio_status().code  == 0 ? "" : '<span class="glyphicon glyphicon-ok"></span>';
-            %>
-            <p><strong>1.)</strong> Crear una copia de los archivos relevantes en el servidor</p>
+            <p class='lead'>Este proyecto no tiene informacion geoespacial aun. Ayudanos a encontrarla siguiendo los siguientes pasos: </p>
+            
+            <p>
+              <strong>1.)</strong> Crear una copia de los archivos relevantes en el servidor 
+              <%- mia.resumen_status().code  == 0 || mia.estudio_status().code  == 0 ? '<span class="glyphicon glyphicon-ok"></span>' : '' %>
+            </p>
             <%- mia.resumen_status().saveButton %>
             <%- mia.estudio_status().saveButton %>
             
@@ -69,8 +70,10 @@
             <p><strong>2.)</strong> Tratar de extraer coordenadas de los PDFs</p>
             <%- mia.resumen_status().openButton %>
             <%- mia.estudio_status().openButton %>
+            
+            <div id='parse-space' ></div>
 
-
+            <ul id="sample-menu" class="dropdown-menu" role="menu"><li><a href="#">Coordenada X</a></li><li><a href="#">Coordenada Y</a></li><li><a href="#">Par</a><a href="#">Nada que ver bro</a></li></ul>
 
       <% }else{ %>
         Este proyecto no tiene documentos disponibles, hora de meter una solicitud de informacion.  

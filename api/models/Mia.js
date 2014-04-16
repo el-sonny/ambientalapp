@@ -46,7 +46,7 @@ function file_status(name,mia){
 		"<a href='#' class='btn btn-danger btn-lg' type='button' disabled='disabled'>"+name+" no encontrado</a>",
 	];
 	var openButtons = [
-		"<a href='/mia/findCoordinates/"+mia.clave+"?filetype="+name+"' class='btn btn-success btn-lg' type='button' >abrir "+name+"</a>",
+		"<a href='/mia/findCoordinates/"+mia.clave+"?filetype="+name+"' class='find-coordinates btn btn-success btn-lg' type='button' >abrir "+name+"</a>",
 		"<a href='#' disabled='disabled'  class='btn btn-warning btn-lg' type='button' >guarde el "+name+" primero</a>",		
 		"<a href='#' class='btn btn-danger btn-lg' type='button' disabled='disabled'>"+name+" no encontrado</a>",
 	];

@@ -41,37 +41,33 @@ function searchPDF(filename,callback){
 		}
 		var doc = pages.join(" ");
 		var regex = /coordenadas/igm;
-		var searchSpaces = [];
-		while(result = regex.exec(doc)){
-			console.log(result.index);
-			if(searchSpaces.length == 0){
-				searchSpaces.push({
-					start : result.index,
-					end : result.index+1000
-				});
-			}else{
-				var overlap = false;
-				searchSpaces.forEach(function(space){
-					if(result.index > space.start && result.index < space.end) overlap = true;
-				});
-				if(!overlap){
-					searchSpaces.push({
-						start : result.index,
-						end : result.index+1000
-					});
-				}
+		var spaces =[];
+		var patterns = [ 
+			{
+				regex : /\d{6,7}\.?\d{0,8}/igm,
+				format : 'UTM'
 			}
-		}
-		if(searchSpaces.length){
-			var searchTexts = [];
-			searchSpaces.forEach(function(space){
-				space.text = doc.substr(space.start,space.end);
-			});
-			callback(null,searchSpaces);
-		}else{
-			callback(null,doc);
-		}
-		
+		];
+		patterns.forEach(function(pattern){
+			var last_match = 0;
+			var matches = [];
+			while(result = pattern.regex.exec(doc)){
+				var distance = result.index - last_match;
+				last_match = result.index;
+				if(distance > 300 && matches.length){
+					spaces.push(matches);
+					matches = [];
+				}
+				matches.push({
+					start : result.index,
+					end : result[0].length + result.index,
+					content : result[0],
+					format : pattern.format
+				});
+			}
+			spaces.push(matches)
+		});
+		callback(null,{spaces:spaces,text:doc});
 	});
 
 }
