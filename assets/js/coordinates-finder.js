@@ -11,6 +11,7 @@ function coordinatesFinder(space,text){
 	this.search_space = this.panel.find('pre').html(this.text).addClass('search-space');
 	this.text = text;
 	this.formatSelect = this.panel.find('select').val(space.format);
+	this.format = space.format;
 	
 	this.initPoints();
 	this.initCoords();
@@ -21,7 +22,7 @@ function coordinatesFinder(space,text){
 	this.panel.find('.map-preview-checkbox').bootstrapSwitch({onText:'on',offText:'off'})
 	.on('switchChange.bootstrapSwitch', $.proxy(this.togglePreview,this));
 
-	if(this.coords.length) $('#parse-space').append(this.panel);
+	if(this.vertices) $('#parse-space').append(this.panel);
 }
 coordinatesFinder.prototype.toggleActivate = function(e,state){
 	if(state){
@@ -41,10 +42,9 @@ coordinatesFinder.prototype.togglePreview = function(e,state){
 	}
 }
 coordinatesFinder.prototype.load_map = function(){
-	var mapCanvas = this.panel.find('.map').html('');
-	console.log(this.coords);
-	$.post('/mia/convertUTM',{points:this.coords},function(points){
-		console.log(points);
+	if(this.coords['latlng'] && this.coords['latlng'].length){
+		var points = this.coords['latlng'];
+		var mapCanvas = this.panel.find('.map').html('');
 		var center = get_center(points);
 		var startMapOptions = {
           center: new google.maps.LatLng(center.x,center.y),
@@ -70,8 +70,12 @@ coordinatesFinder.prototype.load_map = function(){
 			fillOpacity: .55
 		});
 		proyectPath.setMap(map);
-	},'json');
-	//this.map = map;
+	}else if(this.coords['utm'] && this.coords['utm'].length){
+		$.post('/mia/convertUTM',{points:this.coords['utm']},$.proxy(function(coords){
+			this.coords['latlng'] = coords;
+			this.load_map();
+		},this),'json');
+	}		
 }
 
 coordinatesFinder.prototype.initPoints = function(){
@@ -134,7 +138,9 @@ coordinatesFinder.prototype.initCoords = function(){
 	});
 
 	if(coords.length) space.find('.map-preview-checkbox').bootstrapSwitch('disabled',false);
-	this.coords = coords;
+	this.coords = {};
+	this.coords[this.format] = coords;
+	this.vertices = coords.length;
 }
 
 function highlight(text,start,end){
