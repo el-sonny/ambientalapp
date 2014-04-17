@@ -25,6 +25,7 @@ $().ready(function(){
 			$('html, body').animate({ scrollTop: $('#parse-space').offset().top - 100 }, 'slow');
 		},'json');
 	});
+	
 })
 
 function get_center(points){

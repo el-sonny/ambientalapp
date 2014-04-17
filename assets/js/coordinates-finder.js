@@ -13,6 +13,8 @@ function coordinatesFinder(space,text){
 	this.formatSelect = this.panel.find('select').val(space.format);
 	this.format = space.format;
 	
+	this.polygon_template = $('#polygon-template').clone().removeClass('hidden').attr('id','');
+
 	this.initPoints();
 	this.initCoords();
 
@@ -35,31 +37,37 @@ coordinatesFinder.prototype.togglePreview = function(e,state){
 	if(state){
 		this.panel.find('pre').hide();
 		this.panel.find('.map').removeClass('hidden');
-		this.load_map();
+		this.initMap();
+		this.polygons.forEach($.proxy(function(polygon,index){
+			this.drawPolygon(index);
+		},this));
+		
 	}else{
 		this.panel.find('pre').show();
 		this.panel.find('.map').addClass('hidden');
 	}
 }
-coordinatesFinder.prototype.load_map = function(){
-	if(this.coords['latlng'] && this.coords['latlng'].length){
-		var points = this.coords['latlng'];
-		var mapCanvas = this.panel.find('.map').html('');
-		var center = get_center(points);
-		var startMapOptions = {
-          center: new google.maps.LatLng(center.x,center.y),
-          zoom: 17,
-          mapTypeId: google.maps.MapTypeId.SATELLITE
-        };
-
-		var map = new google.maps.Map(mapCanvas.get(0), startMapOptions);
-
+coordinatesFinder.prototype.initMap = function(center){
+	var mapCanvas = this.panel.find('.map').html('');
+	var startMapOptions = {
+      center: new google.maps.LatLng(20,-80),
+      zoom: 17,
+      mapTypeId: google.maps.MapTypeId.SATELLITE
+    };
+	this.map = new google.maps.Map(mapCanvas.get(0), startMapOptions);
+}
+coordinatesFinder.prototype.drawPolygon = function(index){
+	var polygon = this.polygons[index];
+	if(polygon['latlng'] && polygon['latlng'].length){
+		var points = polygon['latlng'];
 		var proyectCoordinates = [];
+		var center = get_center(points);
+		this.map.setCenter(new google.maps.LatLng(center.x,center.y));
 		points.forEach(function(point){
 			proyectCoordinates.push(new google.maps.LatLng(point.x,point.y));
 		});
-		proyectCoordinates.push(new google.maps.LatLng(points[0].x,points[0].y))
 
+		proyectCoordinates.push(new google.maps.LatLng(points[0].x,points[0].y));
 		var proyectPath = new google.maps.Polygon({
 			paths: proyectCoordinates,
 			geodesic: true,
@@ -69,11 +77,11 @@ coordinatesFinder.prototype.load_map = function(){
 			fillColor: '#999912',
 			fillOpacity: .55
 		});
-		proyectPath.setMap(map);
-	}else if(this.coords['utm'] && this.coords['utm'].length){
-		$.post('/mia/convertUTM',{points:this.coords['utm']},$.proxy(function(coords){
-			this.coords['latlng'] = coords;
-			this.load_map();
+		proyectPath.setMap(this.map);
+	}else if(polygon['utm'] && polygon['utm'].length){
+		$.post('/mia/convertUTM',{points:polygon['utm']},$.proxy(function(coords){
+			this.polygons[index]['latlng'] = coords;
+			this.drawPolygon(index);
 		},this),'json');
 	}		
 }
@@ -116,10 +124,10 @@ coordinatesFinder.prototype.initPoints = function(){
 }
 
 coordinatesFinder.prototype.initCoords = function(){
-	var pre = this.search_space;
 	var space = this.panel;
-	var row = space.find('.clone-row').detach().removeClass('clone-row');
-	var table = space.find('table');
+	var polygon_box = this.polygon_template.clone();
+	var row = polygon_box.find('.clone-row').detach().removeClass('clone-row');
+	var table = polygon_box.find('table');
 	var coords = [];
 	var points = this.points;
 	this.points.forEach(function(point){
@@ -137,9 +145,14 @@ coordinatesFinder.prototype.initCoords = function(){
 		}
 	});
 
-	if(coords.length) space.find('.map-preview-checkbox').bootstrapSwitch('disabled',false);
-	this.coords = {};
-	this.coords[this.format] = coords;
+	if(coords.length){
+		space.find('.map-preview-checkbox').bootstrapSwitch('disabled',false);
+		space.find('.polygons-container').append(polygon_box);
+	}
+
+	this.polygons = [{}];
+	this.polygons[0][this.format] = coords;
+
 	this.vertices = coords.length;
 }
 
