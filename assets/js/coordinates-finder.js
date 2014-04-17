@@ -16,9 +16,9 @@ function coordinatesFinder(space,text){
 	this.polygon_template = $('#polygon-template').clone().removeClass('hidden').attr('id','');
 
 	this.initPoints();
-	this.initCoords();
+	this.initPolygons();
 
-	this.panel.find('.space-activation-checkbox').bootstrapSwitch({onText:'si',offText:'no'})
+	this.panel.find('.space-activation-checkbox').bootstrapSwitch({onText:'SI',offText:'NO'})
 	.on('switchChange.bootstrapSwitch', $.proxy(this.toggleActivate,this));
 
 	this.panel.find('.map-preview-checkbox').bootstrapSwitch({onText:'on',offText:'off'})
@@ -26,66 +26,6 @@ function coordinatesFinder(space,text){
 
 	if(this.vertices) $('#parse-space').append(this.panel);
 }
-coordinatesFinder.prototype.toggleActivate = function(e,state){
-	if(state){
-		this.panel.find('.workspace').removeClass('disabled');
-	}else{
-		this.panel.find('.workspace').addClass('disabled');
-	}
-}
-coordinatesFinder.prototype.togglePreview = function(e,state){
-	if(state){
-		this.panel.find('pre').hide();
-		this.panel.find('.map').removeClass('hidden');
-		this.initMap();
-		this.polygons.forEach($.proxy(function(polygon,index){
-			this.drawPolygon(index);
-		},this));
-		
-	}else{
-		this.panel.find('pre').show();
-		this.panel.find('.map').addClass('hidden');
-	}
-}
-coordinatesFinder.prototype.initMap = function(center){
-	var mapCanvas = this.panel.find('.map').html('');
-	var startMapOptions = {
-      center: new google.maps.LatLng(20,-80),
-      zoom: 17,
-      mapTypeId: google.maps.MapTypeId.SATELLITE
-    };
-	this.map = new google.maps.Map(mapCanvas.get(0), startMapOptions);
-}
-coordinatesFinder.prototype.drawPolygon = function(index){
-	var polygon = this.polygons[index];
-	if(polygon['latlng'] && polygon['latlng'].length){
-		var points = polygon['latlng'];
-		var proyectCoordinates = [];
-		var center = get_center(points);
-		this.map.setCenter(new google.maps.LatLng(center.x,center.y));
-		points.forEach(function(point){
-			proyectCoordinates.push(new google.maps.LatLng(point.x,point.y));
-		});
-
-		proyectCoordinates.push(new google.maps.LatLng(points[0].x,points[0].y));
-		var proyectPath = new google.maps.Polygon({
-			paths: proyectCoordinates,
-			geodesic: true,
-			strokeColor: '#eeee22',
-			strokeOpacity: 1.0,
-			strokeWeight: 2,
-			fillColor: '#999912',
-			fillOpacity: .55
-		});
-		proyectPath.setMap(this.map);
-	}else if(polygon['utm'] && polygon['utm'].length){
-		$.post('/mia/convertUTM',{points:polygon['utm']},$.proxy(function(coords){
-			this.polygons[index]['latlng'] = coords;
-			this.drawPolygon(index);
-		},this),'json');
-	}		
-}
-
 coordinatesFinder.prototype.initPoints = function(){
 	var points = [];
 	this.search_space.find('.high').each(function(index){
@@ -123,7 +63,7 @@ coordinatesFinder.prototype.initPoints = function(){
 	this.points = points;
 }
 
-coordinatesFinder.prototype.initCoords = function(){
+coordinatesFinder.prototype.initPolygons = function(){
 	var space = this.panel;
 	var polygon_box = this.polygon_template.clone();
 	var row = polygon_box.find('.clone-row').detach().removeClass('clone-row');
@@ -146,7 +86,9 @@ coordinatesFinder.prototype.initCoords = function(){
 	});
 
 	if(coords.length){
+		//remove later
 		space.find('.map-preview-checkbox').bootstrapSwitch('disabled',false);
+
 		space.find('.polygons-container').append(polygon_box);
 		polygon_box.find('.ttip').tooltip()
 		polygon_box.find('.set-primary-polygon').click(function(e){
@@ -158,13 +100,99 @@ coordinatesFinder.prototype.initCoords = function(){
 			$(this).toggleClass('glyphicon-plus');
 			$(this).toggleClass('glyphicon-minus');
 		});
+		polygon_box.find('.save').click(function(e){
+			e.preventDefault();
+			$(this).addClass('saving');
+			$(this).attr('title','guardando').tooltip();
+			//$.
+		});
 	}
 
 	this.polygons = [{}];
 	this.polygons[0][this.format] = coords;
-
 	this.vertices = coords.length;
+
+	if(this.format == 'utm' && this.vertices){
+		this.convertUTM(0,$.proxy(function(){
+			space.find('.map-preview-checkbox').bootstrapSwitch('disabled',false);
+		},this));
+	}else if(this.polygons[0]['latlng'] && this.vertices){
+		this.polygons[0].center = get_center(this.polygons[0]['latlng']);
+		space.find('.map-preview-checkbox').bootstrapSwitch('disabled',false);
+	}
 }
+
+coordinatesFinder.prototype.toggleActivate = function(e,state){
+	if(state){
+		this.panel.find('.workspace').removeClass('disabled');
+	}else{
+		this.panel.find('.workspace').addClass('disabled');
+	}
+}
+
+coordinatesFinder.prototype.togglePreview = function(e,state){
+	if(state){
+		this.panel.find('pre').hide();
+		this.panel.find('.map').removeClass('hidden');
+		this.initMap();
+		this.polygons.forEach($.proxy(function(polygon,index){
+			this.drawPolygon(index);
+		},this));		
+	}else{
+		this.panel.find('pre').show();
+		this.panel.find('.map').addClass('hidden');
+	}
+}
+
+coordinatesFinder.prototype.initMap = function(center){
+	var mapCanvas = this.panel.find('.map').html('');
+	center = this.polygons[0].center ? this.polygons[0].center : {x:20.933384,y:-86.838691};
+	var startMapOptions = {
+      center: new google.maps.LatLng(center.x,center.y),
+      zoom: 17,
+      mapTypeId: google.maps.MapTypeId.SATELLITE
+    };
+	this.map = new google.maps.Map(mapCanvas.get(0), startMapOptions);
+}
+
+coordinatesFinder.prototype.drawPolygon = function(index){
+	var polygon = this.polygons[index];
+	if(polygon['latlng'] && polygon['latlng'].length){
+		var points = polygon['latlng'];
+		var proyectCoordinates = [];
+		var center = polygon.center ? polygon.center : get_center(points);
+		this.map.setCenter(new google.maps.LatLng(center.x,center.y));
+		points.forEach(function(point){
+			proyectCoordinates.push(new google.maps.LatLng(point.x,point.y));
+		});
+
+		proyectCoordinates.push(new google.maps.LatLng(points[0].x,points[0].y));
+		var proyectPath = new google.maps.Polygon({
+			paths: proyectCoordinates,
+			geodesic: true,
+			strokeColor: '#eeee22',
+			strokeOpacity: 1.0,
+			strokeWeight: 2,
+			fillColor: '#999912',
+			fillOpacity: .55
+		});
+		proyectPath.setMap(this.map);
+	}else if(polygon['utm'] && polygon['utm'].length){
+		this.convertUTM(index,$.proxy(this.drawPolygon,this));
+	}else{
+		//Todo no hay coordenadas
+	}
+}
+
+coordinatesFinder.prototype.convertUTM = function(index,callback){
+	$.post('/mia/convertUTM',{points:this.polygons[index]['utm']},$.proxy(function(coords){
+		this.polygons[index].latlng = coords;
+		this.polygons[index].center = get_center(coords);
+		if(callback) callback(index);
+	},this),'json');
+}
+
+
 
 function highlight(text,start,end){
 	return text.slice(0,start)+"<span class='high'>"+text.slice(start,end)+"</span>"+text.slice(end);

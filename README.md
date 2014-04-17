@@ -1,6 +1,6 @@
 # AmbientalApp
 
-Por ahora es un scraper / api / de las gacetas ambientales disponibles en:
+Por ahora es un scraper / api / indice / perfil / de las gacetas ambientales disponibles en:
 
 http://tramites.semarnat.gob.mx/index.php/component/content/article?id=273
 
