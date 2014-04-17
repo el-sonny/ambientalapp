@@ -1,0 +1,78 @@
+<a name='mapa'></a>
+<h3>Mapa</h3>
+<% if(mia.coordenadas){ %>
+  Bientos
+<% }else if( mia.resumen_status().code < 2 || mia.estudio_status().code <2){ %>
+      <p class='lead'>Este proyecto no tiene informacion geoespacial aun. Ayudanos a encontrarla siguiendo los siguientes pasos: </p>
+      
+      <p>
+        <strong>1.)</strong> Crear una copia de los archivos relevantes en el servidor 
+        <%- mia.resumen_status().code  == 0 || mia.estudio_status().code  == 0 ? '<span class="glyphicon glyphicon-ok"></span>' : '' %>
+      </p>
+      <%- mia.resumen_status().saveButton %>
+      <%- mia.estudio_status().saveButton %>
+      
+      
+      <hr/>
+      <p><strong>2.)</strong> Tratar de extraer coordenadas de los PDFs</p>
+      <%- mia.resumen_status().openButton %>
+      <%- mia.estudio_status().openButton %>
+      
+      <div id='parse-space' ></div>
+
+      <ul id="sample-menu" class="dropdown-menu" role="menu"><li><a href="#">Coordenada X</a></li><li><a href="#">Coordenada Y</a></li><li><a href="#">Par</a><a href="#">Nada que ver bro</a></li></ul>
+
+      <div id='search-space-sample' class='search-space hidden'>
+        <div class='row'>
+          <div class='col-md-2'>
+            <p>¿Coordenadas?</p>
+            <input type='checkbox' checked name='space-enabled' class='space-activation-checkbox' />
+          </div>
+          <div class='col-md-2'>
+            <p>Preview</p>
+            <input type='checkbox' name='space-preview' class='map-preview-checkbox' disabled/>
+          </div>
+          <div class='col-md-2'>
+            <p>Formato</p>
+            <p><select name='coord-format' class="form-control coord-format">
+              <option value='latlong'>latlong</option>
+              <option value='utm' >utm</option>
+            </select></p>
+          </div>
+          <div class='col-md-6'>
+            <p>Poligonos</p>
+            <div class="panel-group" id="accordion">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                      Poligono 1
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse">
+                   <table class='table'>
+                      <tr><th>#</th><th>x</th><th>y</th><th></th></tr>
+                      <tr class='clone-row' >
+                        <td>--</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td><a href='#' class='glyphicon glyphicon-remove'></a></td>
+                      </tr>
+                    </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr/>
+        <div class='row workspace'>
+          <pre class='col-md-12 well'></pre>
+          <div class='points hidden'></div>
+          <div class='col-md-12 map hidden'></div>
+        </div>
+      </div>
+
+<% }else{ %>
+  Este proyecto no tiene documentos disponibles, hora de meter una solicitud de informacion.  
+<% } %>

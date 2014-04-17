@@ -37,11 +37,10 @@ module.exports = {
 	    var fn = converter('utm', 'latlong');
 	    var new_points = [];
 	    points.forEach(function(point){
-	    	latlong = fn(point.x, point.y, point.zone);
-	    	console.log(latlong);
-	    	new_points.push(latlong);
+	    	latlong = fn(point.y, point.x,16);
+	    	new_points.push({x:latlong.latitude,y:latlong.longitude});
 	    });
-	    res.json(new_points);	    
+	    res.json(new_points);
 	},
 };
 function searchPDF(filename,callback){

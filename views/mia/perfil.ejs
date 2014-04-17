@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-sm-3 col-md-2 sidebar">
+    <div class="col-sm-2 col-md-2 sidebar">
       <ul class="nav nav-sidebar">
         <li class="active"><a href="#resumen">Resumen</a></li>
         <li><a href="#documentos">Documentos</a></li>
@@ -8,7 +8,7 @@
         <li><a href="#exportar">Exportar</a></li>
       </ul>
     </div>
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="col-sm-10 col-sm-offset-2 col-md-10 col-md-offset-2 main">
       <a name='resumen'></a>
       <h2 class="sub-header"><%- mia.proyecto %></h2>
       <dl class="dl-horizontal">
@@ -51,60 +51,9 @@
         </span>
       </a>
       <hr/>
-      <a name='mapa'></a>
-      <h3>Mapa</h3>
-      <% if(mia.coordenadas){ %>
-        Bientos
-      <% }else if( mia.resumen_status().code < 2 || mia.estudio_status().code <2){ %>
-            <p class='lead'>Este proyecto no tiene informacion geoespacial aun. Ayudanos a encontrarla siguiendo los siguientes pasos: </p>
-            
-            <p>
-              <strong>1.)</strong> Crear una copia de los archivos relevantes en el servidor 
-              <%- mia.resumen_status().code  == 0 || mia.estudio_status().code  == 0 ? '<span class="glyphicon glyphicon-ok"></span>' : '' %>
-            </p>
-            <%- mia.resumen_status().saveButton %>
-            <%- mia.estudio_status().saveButton %>
-            
-            
-            <hr/>
-            <p><strong>2.)</strong> Tratar de extraer coordenadas de los PDFs</p>
-            <%- mia.resumen_status().openButton %>
-            <%- mia.estudio_status().openButton %>
-            
-            <div id='parse-space' ></div>
-
-            <ul id="sample-menu" class="dropdown-menu" role="menu"><li><a href="#">Coordenada X</a></li><li><a href="#">Coordenada Y</a></li><li><a href="#">Par</a><a href="#">Nada que ver bro</a></li></ul>
-
-            <div id='search-space-sample' class='search-space row hidden'>
-              <div class='col-md-2'>
-                <p>¿Este cuadro tiene informacion de coordenadas o me estoy tripeando?</p>
-                <input type='checkbox' checked name='space-enabled' class='space-activation-checkbox' />
-                <div class='coordinates'>
-                  <hr/>
-                  <p>Preview</p>
-                  <input type='checkbox' name='space-preview' class='map-preview-checkbox' disabled/>
-                  <hr/>
-                  <p>Formato</p>
-                  <select name='coord-format' class="form-control" class='coord-format'>
-                    <option value='latlong'>latlong</option>
-                    <option value='utm' >utm</option>
-                  </select>
-                  <table class='table'>
-                    <tr><th>x</th><th>y</th></tr>
-                    <tr class='clone-row' ><td>--</td><td>--</td></tr>
-                  </table>
-                  <!-- <button type='button' class='btn btn-default'>Convertir</button> -->
-                </div>
-              </div>
-              <pre class='col-md-10 well'></pre>
-              <div class='points hidden'></div>
-              <div class='col-md-10 map hidden'></div>
-            </div>
-
-      <% }else{ %>
-        Este proyecto no tiene documentos disponibles, hora de meter una solicitud de informacion.  
-      <% } %>
+      <%- partial('map-wizard')%>
     </div>
 
   </div>
 </div>
+<%- block('localScripts', '<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlzbyX3J7GwOXdoRwMDfYVbqxNG1D9Jy0&sensor=false" ></script>') %>
