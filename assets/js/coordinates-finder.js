@@ -148,6 +148,16 @@ coordinatesFinder.prototype.initCoords = function(){
 	if(coords.length){
 		space.find('.map-preview-checkbox').bootstrapSwitch('disabled',false);
 		space.find('.polygons-container').append(polygon_box);
+		polygon_box.find('.ttip').tooltip()
+		polygon_box.find('.set-primary-polygon').click(function(e){
+			e.preventDefault();
+			$(this).toggleClass('glyphicon-star-empty');
+			$(this).toggleClass('glyphicon-star');
+		});
+		polygon_box.find('.collapser').click(function(e){
+			$(this).toggleClass('glyphicon-plus');
+			$(this).toggleClass('glyphicon-minus');
+		});
 	}
 
 	this.polygons = [{}];
