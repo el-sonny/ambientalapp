@@ -25,29 +25,12 @@ var cssFilesToInject = [
 // Client-side javascript files to inject in order
 // (uses Grunt-style wildcard/glob/splat expressions)
 var jsFilesToInject = [
-
-  // Below, as a demonstration, you'll see the built-in dependencies
-  // linked in the proper order order
-
-  // Bring in the socket.io client
-  //'js/socket.io.js',
-
-  // then beef it up with some convenience logic for talking to Sails.js
-  //'js/sails.io.js',
-
-  // finally, include a simple boilerplate script that connects a socket
-  // to the Sails backend with some example code
-  //'js/connection.example.js',
-
-  //
-  // *->    you might put other dependencies like jQuery or Angular here   <-*
-  //
-
-  // All of the rest of your app scripts
+  'js/sails.io.js',
   'bower_components/jquery/dist/jquery.min.js',
+  'bower_components/angular/angular.min.js',
   'bower_components/bootstrap/dist/js/bootstrap.min.js',
+  'js/socket.connection.js',
   'js/**/*.js',
-
 ];
 
 
@@ -61,7 +44,7 @@ var jsFilesToInject = [
 // templates get spit out to the same file.  Be sure and check out `tasks/README.md`
 // for information on customizing and installing new tasks.
 var templateFilesToInject = [
-  'templates/**/*.html'
+  'templates/**/*.ejs'
 ];
 
 

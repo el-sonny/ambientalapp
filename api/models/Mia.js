@@ -19,6 +19,11 @@ module.exports = {
 		fecha_de_ingreso : {
 			type: 'DATE',
 		},
+		poligonos: {
+			collection: 'poligono',
+			via: 'mia',
+			dominant: true,
+		},
 		resumen_status : function(){
 			return file_status('resumen',this);
 		},
@@ -28,8 +33,6 @@ module.exports = {
 		resolutivo_status : function(){
 			return file_status('resolutivo',this);
 		},
-
-
 	},
 	migrate : 'safe',
 

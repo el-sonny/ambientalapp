@@ -25,7 +25,7 @@ module.exports = {
 					res.send(pdf);
 				});
 			}else{
-				//TOdo no hay archivo
+				//TODO no hay archivo
 				res.json(mia);
 			}
 
@@ -41,6 +41,18 @@ module.exports = {
 	    	new_points.push({x:latlong.latitude,y:latlong.longitude});
 	    });
 	    res.json(new_points);
+	},
+	savePolygon : function(req,res){
+		Mia.findOne({clave:req.param('mia')}).exec(function(e,mia){
+			if(e) throw(e);
+			var poligono = req.param('poligono');
+			poligono.mia = mia.id;
+			//todo checar si ya existe el poligono
+			Poligono.create(poligono,function(e,p){
+				if(e) throw(e);
+				res.json(p);
+			});
+		});
 	},
 };
 function searchPDF(filename,callback){

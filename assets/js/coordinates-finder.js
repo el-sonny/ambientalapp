@@ -17,6 +17,7 @@ function coordinatesFinder(space,text){
 
 	this.initPoints();
 	this.initPolygons();
+	this.mia = {clave:$('#clave').html(),id:$('#mia-profile').attr('data-mia')};
 
 	this.panel.find('.space-activation-checkbox').bootstrapSwitch({onText:'SI',offText:'NO'})
 	.on('switchChange.bootstrapSwitch', $.proxy(this.toggleActivate,this));
@@ -26,6 +27,7 @@ function coordinatesFinder(space,text){
 
 	if(this.vertices) $('#parse-space').append(this.panel);
 }
+
 coordinatesFinder.prototype.initPoints = function(){
 	var points = [];
 	this.search_space.find('.high').each(function(index){
@@ -84,11 +86,12 @@ coordinatesFinder.prototype.initPolygons = function(){
 			}
 		}
 	});
+	
+	this.polygons = [{}];
+	this.polygons[0][this.format] = coords;
+	this.vertices = coords.length;
 
 	if(coords.length){
-		//remove later
-		space.find('.map-preview-checkbox').bootstrapSwitch('disabled',false);
-
 		space.find('.polygons-container').append(polygon_box);
 		polygon_box.find('.ttip').tooltip()
 		polygon_box.find('.set-primary-polygon').click(function(e){
@@ -100,17 +103,8 @@ coordinatesFinder.prototype.initPolygons = function(){
 			$(this).toggleClass('glyphicon-plus');
 			$(this).toggleClass('glyphicon-minus');
 		});
-		polygon_box.find('.save').click(function(e){
-			e.preventDefault();
-			$(this).addClass('saving');
-			$(this).attr('title','guardando').tooltip();
-			//$.
-		});
-	}
-
-	this.polygons = [{}];
-	this.polygons[0][this.format] = coords;
-	this.vertices = coords.length;
+		polygon_box.find('.save').click($.proxy(this.savePolygon,this,0,polygon_box));
+	}	
 
 	if(this.format == 'utm' && this.vertices){
 		this.convertUTM(0,$.proxy(function(){
@@ -119,6 +113,20 @@ coordinatesFinder.prototype.initPolygons = function(){
 	}else if(this.polygons[0]['latlng'] && this.vertices){
 		this.polygons[0].center = get_center(this.polygons[0]['latlng']);
 		space.find('.map-preview-checkbox').bootstrapSwitch('disabled',false);
+	}
+}
+
+coordinatesFinder.prototype.savePolygon = function(index,box,e){
+	e.preventDefault();
+	if(!this.polygons[index].id){
+		box.find('.save').addClass('saving');
+		this.polygons[index].name = box.find('.polygon-name').val();
+		this.polygons[index].primary = box.find('.set-primary-polygon').hasClass('glyphicon-star');
+		this.polygons[index].mia = this.mia.id;
+		socket.post('/poligono',this.polygons[index], $.proxy(function (polygon){
+		  box.find('.save').removeClass('glyphicon-save').addClass('glyphicon-saved');
+		  this.polygons[index] = polygon;
+		},this));
 	}
 }
 
