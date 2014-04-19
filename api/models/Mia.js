@@ -32,7 +32,6 @@ module.exports = {
 	},
 	migrate : 'safe',
 	beforeUpdate: function(values, next) {
-		console.log(typeof(values.resolutivo));
 		if(typeof(values.resumen) != 'undefined' ) values.resumen_status = file_status('resumen',values);
 		if(typeof(values.estudio) != 'undefined' ) values.estudio_status = file_status('estudio',values);
 		if(typeof(values.resolutivo) != 'undefined' ) values.resolutivo_status = file_status('resolutivo',values);
@@ -48,14 +47,14 @@ function file_status(name,mia){
 	var buttons = ['success','info','danger'];
 	var status = mia[name+'_file'] ? 0 : mia[name] ? 1 : 2;
 	var saveButtons = [
-		"<a href='#' class='btn btn-success btn-lg' type='button' disabled='disabled' >"+name+" copiado</a>",
+		"<a href='#' class='btn btn-success btn-lg' type='button' disabled >"+name+" copiado</a>",
 		"<a href='/scraper/downloadProjectFile/"+mia.clave+"?filetype="+name+"' class='download-doc btn btn-primary btn-lg' type='button' >copiar "+name+"</a>",		
-		"<a href='#' class='btn btn-danger btn-lg' type='button' disabled='disabled'>"+name+" no encontrado</a>",
+		"<a href='#' class='btn btn-danger btn-lg' type='button' disabled>"+name+" no encontrado</a>",
 	];
 	var openButtons = [
 		"<a href='/mia/findCoordinates/"+mia.clave+"?filetype="+name+"' class='find-coordinates btn btn-success btn-lg' type='button' >abrir "+name+"</a>",
-		"<a href='#' disabled='disabled'  class='btn btn-warning btn-lg' type='button' >guarde el "+name+" primero</a>",		
-		"<a href='#' class='btn btn-danger btn-lg' type='button' disabled='disabled'>"+name+" no encontrado</a>",
+		"<a href='#' disabled class='btn btn-warning btn-lg' type='button' >guarde el "+name+" primero</a>",		
+		"<a href='#' class='btn btn-danger btn-lg' type='button' disabled>"+name+" no encontrado</a>",
 	];
 
 	return {

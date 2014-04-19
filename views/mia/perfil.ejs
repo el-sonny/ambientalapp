@@ -36,24 +36,19 @@
       <h3>Documentos</h3>
       <a ng-href='{{mia.resumen_status.link}}' ng-class='"btn-"+mia.resumen_status.button' type="button" class="btn btn-lg" ng-disabled="mia.resumen_status.disabled" >
         Resumen 
-        <span class="badge" ng-bind='mia.resumen_status.label'>
-          <%= mia.resumen_status.label %>
-        </span>
+        <span class="badge" ng-bind='mia.resumen_status.label'><%= mia.resumen_status.label %></span>
       </a>
       
-      <a href='<%- mia.estudio_status.link %>' type="button" class="btn btn-<%- mia.estudio_status.button %> btn-lg" ng-disabled="mia.estudio_status.disabled">
+      <a ng-href='{{mia.estudio_status.link}}' ng-class='"btn-"+mia.estudio_status.button' type="button" class="btn btn-lg" ng-disabled="mia.estudio_status.disabled" >
         Estudio 
-        <span class="badge">
-          <%= mia.estudio_status.label %>
-        </span>
+        <span class="badge" ng-bind='mia.estudio_status.label'><%= mia.estudio_status.label %></span>
       </a>
-      
-      <a href='<%- mia.resolutivo_status.link %>' type="button" class="btn btn-<%- mia.resolutivo_status.button %> btn-lg"  ng-disabled="mia.resolutivo_status.disabled" >
+
+      <a ng-href='{{mia.resolutivo_status.link}}' ng-class='"btn-"+mia.resolutivo_status.button' type="button" class="btn btn-lg" ng-disabled="mia.resolutivo_status.disabled" >
         Resolutivo 
-        <span class="badge">
-          <%= mia.resolutivo_status.label %>
-        </span>
+        <span class="badge" ng-bind='mia.resolutivo_status.label'><%= mia.resolutivo_status.label %></span>
       </a>
+
       <hr/>
       <%- partial('map-wizard')%>
     </div>

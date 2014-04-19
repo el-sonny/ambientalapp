@@ -84,7 +84,6 @@ module.exports = {
 					mia[req.param('filetype')+'_file'] = file;
 					mia.save(function(e,mia){
 						if(e) throw(e);
-						mia.set_file_status();
 						Mia.publishUpdate(mia.id,mia);
 						res.json(mia);
 					});

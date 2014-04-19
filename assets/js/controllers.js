@@ -1,14 +1,19 @@
-var ambientalApp = angular.module('ambientalapp', []);
- 
-ambientalApp.controller('MiaCtrl', function ($scope) {
-	$scope.mia = mia;
-	socket.get('/mia/'+$('#mia-profile').attr('data-mia'),function (mia){
-		console.log('Loaded mia: ',mia);
+var app = angular.module('ambientalapp', ['ngSanitize']);
+app.controller('MiaCtrl', function ($scope,$sce) {
+	//console.log($sc);
+	//$scope.mia = mia;
+	socket.get('/mia/'+mia.id,function (mia){
 		$scope.mia = mia;
-		socket.on('mia', function (msg){
-			console.log('Here\'s what happened:',msg.verb);
-			console.log('Here\'s the relevant data:', msg.data);
-			$scope.mia = msg.data ;
-		});
+		console.log('Loaded mia: ',$scope.mia);
+		$scope.$apply()
 	});
+
+	socket.on('mia', function (msg){
+		$scope.mia = msg.data ;
+		$scope.$apply();
+	});
+
+	$scope.trustHTML = function(snippet){
+		return $sce.trustAsHtml(snippet);
+	}
 });
