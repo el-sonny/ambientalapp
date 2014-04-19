@@ -83,8 +83,12 @@ module.exports = {
 				if(file){
 					mia[req.param('filetype')+'_file'] = file;
 					mia.save(function(e,mia){
+						if(e) throw(e);
+						mia.set_file_status();
+						Mia.publishUpdate(mia.id,mia);
 						res.json(mia);
 					});
+					Mia.p
 				};
 			});
 		});
@@ -112,7 +116,7 @@ module.exports = {
 	},
 	
 	extractStatus : function(req,res){
-		Mia.find({situacion_actual:{'>':''}}).exec(function(e,mias){
+		Mia.find({situacion_actual:{'>':''},clave:'23QR2014TD001'}).exec(function(e,mias){
 			if(e) throw(e);
 			console.log('found '+mias.length);
 			var statuses = [];

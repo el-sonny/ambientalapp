@@ -12,6 +12,10 @@ module.exports = {
 			unique : true,
 			index : true
 		},
+		file_status_set : {
+			type : 'BOOLEAN',
+			defaultsTo: false
+		},
 		status : {
 			model : 'status',
 			dominant : true
@@ -24,17 +28,17 @@ module.exports = {
 			via: 'mia',
 			dominant: true,
 		},
-		resumen_status : function(){
-			return file_status('resumen',this);
-		},
-		estudio_status : function(){
-			return file_status('estudio',this);
-		},
-		resolutivo_status : function(){
-			return file_status('resolutivo',this);
-		},
+
 	},
 	migrate : 'safe',
+	beforeUpdate: function(values, next) {
+		console.log(typeof(values.resolutivo));
+		if(typeof(values.resumen) != 'undefined' ) values.resumen_status = file_status('resumen',values);
+		if(typeof(values.estudio) != 'undefined' ) values.estudio_status = file_status('estudio',values);
+		if(typeof(values.resolutivo) != 'undefined' ) values.resolutivo_status = file_status('resolutivo',values);
+		//console.log('updating status ',values);
+		next();
+	}
 
 };
 function file_status(name,mia){
@@ -58,7 +62,7 @@ function file_status(name,mia){
 		label : labels[status],
 		button : buttons[status],
 		link : links[status],
-		disabled : status == 2 ? "disabled='disabled'" : '',
+		disabled : status == 2,
 		code : status,
 		saveButton : saveButtons[status],
 		openButton : openButtons[status],

@@ -6,7 +6,6 @@ socket.on('connect', function socketConnected() {
       console.log('FIREHOSE (debug): Sails published a message ::\n', message);
     });
   });
-  socket.get('/mia/'+$('#mia-profile').attr('data-mia'),function (mia){
-    console.log('Loaded mia: ',mia);
-  });
+  
+  
 });

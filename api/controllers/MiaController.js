@@ -15,7 +15,15 @@ module.exports = {
 	perfil : function(req,res){
 		Mia.findOne({clave:req.param('id')}).populate('status').exec(function(e,mia){
 			if(e) throw(e);
-			res.view({mia:mia});
+			if(mia.file_status_set){
+				mia.file_status_set = true;
+				mia.save(function(e,mia){
+					res.view({mia:mia});	
+				});
+			}else{
+				res.view({mia:mia});
+			}
+			
 		});
 	},	
 	findCoordinates : function(req,res){
