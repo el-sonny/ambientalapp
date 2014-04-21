@@ -1,0 +1,17 @@
+<br/> 
+<p>
+  <a ng-href='{{mia.resumen_status.link}}' ng-class='"btn-"+mia.resumen_status.button' type="button" class="btn btn-lg btn-<%-mia.resumen_status.button%>" ng-disabled="mia.resumen_status.disabled" <%- mia.estudio_status.disabled ? 'disabled' : '' %> >
+    Resumen 
+    <span class="badge" ng-bind='mia.resumen_status.label'><%= mia.resumen_status.label %></span>
+  </a>
+
+  <a ng-href='{{mia.estudio_status.link}}' ng-class='"btn-"+mia.estudio_status.button' type="button" class="btn btn-lg btn-<%-mia.estudio_status.button%>" ng-disabled="mia.resumen_status.disabled" <%- mia.resumen_status.disabled ? 'disabled' : '' %> >
+    Estudio 
+    <span class="badge" ng-bind='mia.estudio_status.label'><%= mia.estudio_status.label %></span>
+  </a>
+
+  <a ng-href='{{mia.resolutivo_status.link}}' ng-class='"btn-"+mia.resolutivo_status.button' type="button" class="btn btn-lg btn-<%-mia.resolutivo_status.button%>" ng-disabled="mia.resolutivo_status.disabled" <%- mia.resolutivo_status.disabled ? 'disabled' : '' %> >
+    Resolutivo 
+    <span class="badge" ng-bind='mia.resolutivo_status.label'><%= mia.resolutivo_status.label %></span>
+  </a>
+</p>

@@ -1,26 +1,19 @@
-<a name='mapa'></a>
-<h3>Mapa</h3>
-<% if(mia.coordenadas){ %>
-  Bientos
-<% }else if( mia.resumen_status.code < 2 || mia.estudio_status.code <2){ %>
-      <p class='lead'>Este proyecto no tiene informacion geoespacial aun. Ayudanos a encontrarla siguiendo los siguientes pasos: </p>
-      
-      <p>
-        <strong>1.)</strong> Crear una copia de los archivos relevantes en el servidor 
-        <%- mia.resumen_status.code  == 0 || mia.estudio_status.code  == 0 ? '<span class="glyphicon glyphicon-ok"></span>' : '' %>
-      </p>
-      <span ng-bind-html='trustHTML(mia.resumen_status.saveButton)'><%- mia.resumen_status.saveButton %></span>
-      <span ng-bind-html='trustHTML(mia.estudio_status.saveButton)'><%- mia.estudio_status.saveButton %></span>
-      
-      
-      <hr/>
-      <p><strong>2.)</strong> Tratar de extraer coordenadas de los PDFs</p>
-      <span ng-bind-html='trustHTML(mia.resumen_status.openButton)'><%- mia.resumen_status.openButton %></span>
-      <span ng-bind-html='trustHTML(mia.estudio_status.openButton)'><%- mia.estudio_status.openButton %></span>
-      
-      <div id='parse-space' ></div>
+<br/>
+<% if( mia.resumen_status.code < 2 || mia.estudio_status.code <2){ %>
+  <p class='lead'>Este proyecto no tiene informacion geoespacial aun. Ayudanos a encontrarla siguiendo los siguientes pasos: </p>
 
-      <%- partial('ajax-parts')%>
+  <p>
+    <strong>1.)</strong> Crear una copia de los archivos relevantes en el servidor 
+    <%- mia.resumen_status.code  == 0 || mia.estudio_status.code  == 0 ? '<span class="glyphicon glyphicon-ok"></span>' : '' %>
+  </p>
+  <span ng-bind-html='trustHTML(mia.resumen_status.saveButton)'><%- mia.resumen_status.saveButton %></span>
+  <span ng-bind-html='trustHTML(mia.estudio_status.saveButton)'><%- mia.estudio_status.saveButton %></span>
+  <hr/>
+  <p><strong>2.)</strong> Tratar de extraer coordenadas de los PDFs</p>
+  <span ng-bind-html='trustHTML(mia.resumen_status.openButton)'><%- mia.resumen_status.openButton %></span>
+  <span ng-bind-html='trustHTML(mia.estudio_status.openButton)'><%- mia.estudio_status.openButton %></span>
+  <div id='parse-space' ></div>
+  <%- partial('ajax-parts')%>
 <% }else{ %>
   Este proyecto no tiene documentos disponibles, hora de meter una solicitud de informacion.  
 <% } %>

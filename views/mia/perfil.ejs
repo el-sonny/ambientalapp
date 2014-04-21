@@ -32,25 +32,16 @@
         <dd><%- mia.status.desc %> (<%- mia.estado %>)</dd>
       </dl>
       <hr/>
-      <a name='documentos'></a>
-      <h3>Documentos</h3>
-      <a ng-href='{{mia.resumen_status.link}}' ng-class='"btn-"+mia.resumen_status.button' type="button" class="btn btn-lg" ng-disabled="mia.resumen_status.disabled" >
-        Resumen 
-        <span class="badge" ng-bind='mia.resumen_status.label'><%= mia.resumen_status.label %></span>
-      </a>
-      
-      <a ng-href='{{mia.estudio_status.link}}' ng-class='"btn-"+mia.estudio_status.button' type="button" class="btn btn-lg" ng-disabled="mia.estudio_status.disabled" >
-        Estudio 
-        <span class="badge" ng-bind='mia.estudio_status.label'><%= mia.estudio_status.label %></span>
-      </a>
-
-      <a ng-href='{{mia.resolutivo_status.link}}' ng-class='"btn-"+mia.resolutivo_status.button' type="button" class="btn btn-lg" ng-disabled="mia.resolutivo_status.disabled" >
-        Resolutivo 
-        <span class="badge" ng-bind='mia.resolutivo_status.label'><%= mia.resolutivo_status.label %></span>
-      </a>
-
-      <hr/>
-      <%- partial('map-wizard')%>
+      <ul class="nav nav-pills">
+        <li class="active"><a href="#documentos" data-toggle="tab">Documentos</a></li>
+        <li><a href="#mapa" data-toggle="tab">Mapa</a></li>
+        <li><a href="#comentarios" data-toggle="tab">Comentarios</a></li>
+        <li><a href="#historial" data-toggle="tab">Historial</a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade in active" id="documentos"><%- partial('documentos')%></div>
+        <div class="tab-pane fade" id="mapa"><%- partial('map-wizard')%></div>
+      </div>
     </div>
 
   </div>

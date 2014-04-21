@@ -1,9 +1,9 @@
 var app = angular.module('ambientalapp', ['ngSanitize']);
 app.controller('MiaCtrl', function ($scope,$sce) {
 	//console.log($sc);
-	//$scope.mia = mia;
+	$scope.mia = mia;
 	socket.get('/mia/'+mia.id,function (mia){
-		$scope.mia = mia;
+		//$scope.mia = mia;
 		console.log('Loaded mia: ',$scope.mia);
 		$scope.$apply()
 	});
