@@ -21,7 +21,10 @@ $().ready(function(){
 			$('html, body').animate({ scrollTop: $('#parse-space').offset().top - 100 }, 'slow');
 		},'json');
 	});
-	
+
+	$('#buscar-coordenadas').click(function(e){
+		$.get('/mia/processFiles/'+mia.clave);
+	});
 })
 
 function get_center(points){

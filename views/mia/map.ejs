@@ -1,0 +1,39 @@
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#map-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id='map-navbar-collapse-1'>
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#main-map" data-toggle='tab'>Mapa</a></li>
+        <li><a id='buscar-coordenadas' data-toggle='tab' href="#wizard">Buscar coordenadas</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Poligonos <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li class="divider"></li>
+            <li><a href="#">Ver Tablas y Referencias</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+<div class="tab-content">
+  <div class="tab-pane active" id="main-map">
+    <div class="alert alert-warning">
+      <strong>Oops!</strong> Este proyecto no tiene informacion geoespacial aun. Ayudanos a encontrarla haciendo click en "Buscar coordenadas"
+    </div>
+  </div>
+  <div class="tab-pane" id="wizard"><%- partial('map-wizard')%></div>
+</div>

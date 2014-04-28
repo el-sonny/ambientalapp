@@ -62,42 +62,10 @@ module.exports = {
 			});
 		});
 	},
-};
-function searchPDF(filename,callback){
-	var extract = require('pdf-text-extract');
-	extract(filename, function (err, pages) {
-		if (err) {
-			console.dir(err);
-			callback(err);
-		}
-		var doc = pages.join(" ");
-		var regex = /coordenadas/igm;
-		var spaces =[];
-		var patterns = [ 
-			{
-				regex : /\d{6,7}\.?\d{0,8}/igm,
-				format : 'utm'
-			}
-		];
-		patterns.forEach(function(pattern){
-			var last_match = 0;
-			var matches = [];
-			while(result = pattern.regex.exec(doc)){
-				var distance = result.index - last_match;
-				last_match = result.index;
-				if(distance > 300 && matches.length){
-					spaces.push({matches:matches,format:pattern.format});
-					matches = [];
-				}
-				matches.push({
-					start : result.index,
-					end : result[0].length + result.index,
-					content : result[0],
-				});
-			}
-			spaces.push({matches:matches,format:pattern.format})
+	processFiles : function(req,res){
+		ScraperService.processFiles(req.param('id'),function(e,files){
+			res.json(files);
 		});
-		callback(null,{spaces:spaces,text:doc});
-	});
+	}
+};
 
-}

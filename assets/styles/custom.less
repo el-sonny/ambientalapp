@@ -77,8 +77,9 @@ body {
   border-radius: 50%;
 }
 /*
- * Placeholder dashboard ideas
+ * Custom code
  */
+.coord-steps{margin:0 0 20px;}
 #parse-space{margin:20px 0;}
 #parse-space pre{font-family:monospace;}
 #parse-space .workspace{-webkit-transition:height 1s,-webkit-filter 1s;height:500px;}
@@ -94,3 +95,27 @@ body {
 #parse-space .poligon-icons{margin:9px 0;}
 #parse-space .poligon-icons .glyphicon{margin-left:15px;}
 #parse-space .poligon-icons .save.saving{cursor:default;opacity:.4;}
+/*
+ * Loading animation
+ */
+.icon-animate {
+  animation-name: rotateThis;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+
+  -webkit-animation-name: rotateThis;
+  -webkit-animation-duration: 2s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+}
+ 
+@keyframes "rotateThis" {
+  from { transform:rotate( 0deg );   }
+  to   { transform:rotate( 360deg ); }
+}
+
+@-webkit-keyframes "rotateThis" {
+  from { -webkit-transform:rotate( 0deg );   }
+  to   { -webkit-transform:rotate( 360deg ); }
+}

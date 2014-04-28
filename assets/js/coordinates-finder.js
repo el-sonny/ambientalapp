@@ -22,7 +22,7 @@ function coordinatesFinder(space,text){
 	this.panel.find('.space-activation-checkbox').bootstrapSwitch({onText:'SI',offText:'NO'})
 	.on('switchChange.bootstrapSwitch', $.proxy(this.toggleActivate,this));
 
-	this.panel.find('.map-preview-checkbox').bootstrapSwitch({onText:'on',offText:'off'})
+	this.panel.find('.map-preview-checkbox').bootstrapSwitch({onText:'ON',offText:'OFF'})
 	.on('switchChange.bootstrapSwitch', $.proxy(this.togglePreview,this));
 
 	if(this.vertices) $('#parse-space').append(this.panel);

@@ -1,19 +1,19 @@
-<br/>
-<% if( mia.resumen_status.code < 2 || mia.estudio_status.code <2){ %>
-  <p class='lead'>Este proyecto no tiene informacion geoespacial aun. Ayudanos a encontrarla siguiendo los siguientes pasos: </p>
+<% if( mia.resumen  || mia.estudio){ %>
+<div class="btn-group coord-steps">
+  <button type="button" class="btn btn-default active">Tareas de Sistema</button>
+  <button type="button" class="btn btn-default disabled">Extraer Coordenadas</button>
+</div>
 
-  <p>
-    <strong>1.)</strong> Crear una copia de los archivos relevantes en el servidor 
-    <%- mia.resumen_status.code  == 0 || mia.estudio_status.code  == 0 ? '<span class="glyphicon glyphicon-ok"></span>' : '' %>
-  </p>
-  <span ng-bind-html='trustHTML(mia.resumen_status.saveButton)'><%- mia.resumen_status.saveButton %></span>
-  <span ng-bind-html='trustHTML(mia.estudio_status.saveButton)'><%- mia.estudio_status.saveButton %></span>
-  <hr/>
-  <p><strong>2.)</strong> Tratar de extraer coordenadas de los PDFs</p>
-  <span ng-bind-html='trustHTML(mia.resumen_status.openButton)'><%- mia.resumen_status.openButton %></span>
-  <span ng-bind-html='trustHTML(mia.estudio_status.openButton)'><%- mia.estudio_status.openButton %></span>
-  <div id='parse-space' ></div>
-  <%- partial('ajax-parts')%>
+<pre>
+El sistema debe completar algunas tareas antes de empezar, espere por favor.
+-Tareas
+--Copiar archivos
+ |--Resumen ejecutivo <span ng-class='fileDownloadStatusIcon("resumen")'></span>
+ |--Estudio de impacto ambiental <span ng-class='fileDownloadStatusIcon("estudio")'></span>
+--Procesar archivos
+ |--Resumen ejecutivo <span ng-class='fileProcessStatusIcon("resumen")'></span>
+ |--Estudio de impacto ambiental <span ng-class='fileProcessStatusIcon("estudio")'></span>
+</pre>
 <% }else{ %>
   Este proyecto no tiene documentos disponibles, hora de meter una solicitud de informacion.  
 <% } %>

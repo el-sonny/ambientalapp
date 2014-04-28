@@ -75,24 +75,6 @@ module.exports = {
 		})
 	},
 	
-	downloadProjectFile : function(req,res){
-		Mia.findOne({clave:req.param('id')}).exec(function(e,mia){
-			dir = 'assets/mias/'+req.param('filetype')+'/';
-			downloadWget(mia[req.param('filetype')],function(e,file){
-				if(e) throw(e);
-				if(file){
-					mia[req.param('filetype')+'_file'] = file;
-					mia.save(function(e,mia){
-						if(e) throw(e);
-						Mia.publishUpdate(mia.id,mia);
-						res.json(mia);
-					});
-					Mia.p
-				};
-			});
-		});
-	},
-	
 	mias : function(req,res){
 		Gaceta.find({},function(e,gacetas){
 			async.mapSeries(gacetas,scrapeMias,function(e,g){
@@ -113,51 +95,9 @@ module.exports = {
 			});
 		});
 	},
-	
-	extractStatus : function(req,res){
-		Mia.find({situacion_actual:{'>':''},clave:'23QR2014TD001'}).exec(function(e,mias){
-			if(e) throw(e);
-			console.log('found '+mias.length);
-			var statuses = [];
-			async.mapSeries(mias,processStatus,function(e,statuses){
-				res.json(statuses);
-			});
-		});
-	},
-	
-	fixDate : function(req,res){
-		Mia.find({}).exec(function(e,mias){
-			async.mapLimit(mias,20,function(mia,callback){
-				if(mia.fecha_de_ingreso){
-					if(typeof(mia.fecha_de_ingreso) == 'string'){
-						var date = mia.fecha_de_ingreso.split("/");
-						if(date.length == 3){
-							date = date[2]+'-'+date[1]+'-'+date[0];
-							mia.fecha_de_ingreso = new Date(date);
-							console.log(timestamp()+' fixing : '+mia.clave+'	'+counter++);
-							return mia.save(callback);
-						}
-					}
-				}
-				console.log(timestamp()+' correct : '+mia.clave+'	'+counter2++);
-				return setImmediate(function(){callback(null,mia);});
-			},function(e,mias){
-				res.json(mias);
-			});
-		});
-	},
-
 };
 
-var processStatus = function(mia,callback){
-	Status.findOrCreate({desc:mia.situacion_actual},{desc:mia.situacion_actual},function(e,status){
-		if(e) throw(e);
-		Mia.update({clave:mia.clave},{status:status.id},callback);
-		if(counter++ % 100 == 0) console.log(timestamp()+" processed: "+counter);
 
-		//console.log('processing: '+mia.clave);
-	});
-}
 
 var timestamp = function(){
 	var newDate = new Date();
