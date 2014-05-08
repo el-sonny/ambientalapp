@@ -1,17 +1,12 @@
 $().ready(function(){
-	$(document).on('click','.download-doc',function(e){
-		e.preventDefault();
-		var button = $(this).attr('disabled','disabled').html($(this).html().replace('copiar','descargando'));
-		$.get(button.attr('href'));
-	});
-
+	
 	$(document).on('mouseenter','.high',function(){
 		$('.'+$(this).attr('data-component')).addClass('active');
 	}).on('mouseleave','.high',function(){
 		$('.'+$(this).attr('data-component')).removeClass('active');
 	});
 	
-	$(document).on('click','.find-coordinates',function(e){
+/*	$(document).on('click','.find-coordinates',function(e){
 		e.preventDefault();
 		var button = $(this).attr('disabled','disabled').html('Buscando coordenadas');
 		$.get(button.attr('href'),function(result){			
@@ -20,7 +15,7 @@ $().ready(function(){
 			});
 			$('html, body').animate({ scrollTop: $('#parse-space').offset().top - 100 }, 'slow');
 		},'json');
-	});
+	});*/
 
 	$('#buscar-coordenadas').click(function(e){
 		$.get('/mia/processFiles/'+mia.clave);

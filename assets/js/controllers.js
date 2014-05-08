@@ -13,7 +13,11 @@ app.controller('MiaCtrl', function ($scope,$sce) {
 		return $sce.trustAsHtml(snippet);
 	}
 
-
+	$scope.extractCoordsDisabled = function(){
+		return (mia.resumen && mia.resumen.processed && mia.resumen.processed == 2) ||
+		(mia.estudio && mia.estudio.processed && mia.estudio.processed == 2) 
+		? '' : 'disabled';
+	};
 
 	//Display Apropiate icons for the coordinates tool
 	$scope.fileDownloadStatusIcon = function(name) {

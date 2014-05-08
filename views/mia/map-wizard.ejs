@@ -1,19 +1,23 @@
 <% if( mia.resumen  || mia.estudio){ %>
-<div class="btn-group coord-steps">
-  <button type="button" class="btn btn-default active">Tareas de Sistema</button>
-  <button type="button" class="btn btn-default disabled">Extraer Coordenadas</button>
+<ul class="nav nav-pills coord-steps">
+  <li  class='active' ><a data-toggle="tab" href='#system-tasks'>Tareas de Sistema</a></li>
+  <li><a data-toggle="tab" href='#parse-space' ng-class='extractCoordsDisabled()'>Extraer Coordenadas</a></li>
+</ul>
+<div class="tab-content">
+	<pre id='system-tasks' class="tab-pane active" >
+	El sistema debe completar algunas tareas antes de empezar, espere por favor.
+	-Tareas
+	--Copiar archivos
+	 |--Resumen ejecutivo <span ng-class='fileDownloadStatusIcon("resumen")'></span>
+	 |--Estudio de impacto ambiental <span ng-class='fileDownloadStatusIcon("estudio")'></span>
+	--Procesar archivos
+	 |--Resumen ejecutivo <span ng-class='fileProcessStatusIcon("resumen")'></span>
+	 |--Estudio de impacto ambiental <span ng-class='fileProcessStatusIcon("estudio")'></span>
+	</pre>
+	<div id='parse-space' class="tab-pane" ng-controller='coordFinderController'>
+		<%- partial('search-space') -%>
+	</div>
 </div>
-
-<pre>
-El sistema debe completar algunas tareas antes de empezar, espere por favor.
--Tareas
---Copiar archivos
- |--Resumen ejecutivo <span ng-class='fileDownloadStatusIcon("resumen")'></span>
- |--Estudio de impacto ambiental <span ng-class='fileDownloadStatusIcon("estudio")'></span>
---Procesar archivos
- |--Resumen ejecutivo <span ng-class='fileProcessStatusIcon("resumen")'></span>
- |--Estudio de impacto ambiental <span ng-class='fileProcessStatusIcon("estudio")'></span>
-</pre>
 <% }else{ %>
   Este proyecto no tiene documentos disponibles, hora de meter una solicitud de informacion.  
 <% } %>

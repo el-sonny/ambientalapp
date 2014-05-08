@@ -44,6 +44,7 @@ module.exports = {
 			});
 		});
 	},
+	//Extrae los archivos para convertirlos en objeto
 	fixFiles : function(){
 		Mia.find({}).exec(function(e,mias){
 			console.log('found ',mias.length);
@@ -54,6 +55,7 @@ module.exports = {
 
 		});
 	},
+	//Procesa los archivos de un MIA
 	processFiles : function(clave,callback){
 		Mia.findOne({clave:clave}).exec(function(e,mia){
 			async.mapSeries(['resumen','estudio'],function(type,cb){processFile(mia,type,cb)},callback);
@@ -62,51 +64,86 @@ module.exports = {
 
 }
 var processFile = function(mia,filetype,cb){
+	//&& !mia[filetype].processed
 	if(mia[filetype].url && !mia[filetype].file){
 		downloadProjectFile(mia,filetype,function(e,file){
-
-			cb(e,file);
+			extractPDF(mia,filetype,cb);
 		});
 	}else{
-		cb(null,mia[filetype]);
-	}
+		extractPDF(mia,filetype,cb);
+	}/*else{
+		cb(null,mia);
+	}*/
 }
-function searchPDF(filename,callback){
-	var extract = require('pdf-text-extract');
-	extract(filename, function (err, pages) {
-		if (err) {
-			console.dir(err);
-			callback(err);
-		}
-		var doc = pages.join(" ");
-		var spaces = [];
-		var patterns = [ 
-			{
-				regex : /\d{6,7}\.?\d{0,8}/igm,
-				format : 'utm'
+function extractPDF(mia,filetype,callback){
+	if(mia[filetype].file){
+		mia[filetype].processed = 1;
+		mia.save(function(e,mia){Mia.publishUpdate(mia.id,mia);});
+		var filename = mia[filetype].file;
+		var extract = require('pdf-text-extract');
+		extract(filename, function (err, pages) {
+			if (err) {
+				console.dir(err);
+				callback(err);
 			}
-		];
-		patterns.forEach(function(pattern){
-			var last_match = 0;
-			var matches = [];
-			while(result = pattern.regex.exec(doc)){
-				var distance = result.index - last_match;
-				last_match = result.index;
-				if(distance > 300 && matches.length){
-					if(matches.length > 1) spaces.push({matches:matches,format:pattern.format});
-					matches = [];
-				}
-				matches.push({
-					start : result.index,
-					end : result[0].length + result.index,
-					content : result[0],
-				});
-			}
-			spaces.push({matches:matches,format:pattern.format})
-		});
-		callback(null,spaces);
-	});
 
+			var page_lengths = [];
+			pages.forEach(function(page){
+				page_lengths.push(page.length);
+			});
+			var doc = pages.join(" ");
+			var spaces = [];
+			var patterns = [ 
+				{
+					regex : /\d{6,7}\.?\d{0,8}/igm,
+					format : 'utm'
+				}
+			];
+			patterns.forEach(function(pattern){
+				var last_match = 0;
+				var matches = [];
+				var points = [];
+				var match = {};
+				while(result = pattern.regex.exec(doc)){
+					var distance = result.index - last_match;
+					last_match = result.index;
+					if(distance > 300 && matches.length){
+						if(matches.length > 1) spaces.push({points:points,format:pattern.format});
+						matches = [];
+						points = [];
+					}
+					var match = {
+						start : result.index,
+						end : result[0].length + result.index,
+						content : result[0],
+						format : pattern.format,
+					};
+
+					//Its a y value
+					if(matches.length % 2){
+						point.y = result[0];
+						point.reference.y = match;
+						points.push(point);
+					//ITS x
+					}else{
+						var point = {x:result[0],format:pattern.format,reference:{x:match}};						
+					}
+					matches.push(match);
+					
+				}
+				spaces.push({points:points,format:pattern.format});
+			});
+			mia[filetype].spaces = spaces;
+			mia[filetype].processed = 2;
+			mia[filetype].page_lengths = page_lengths;
+			mia[filetype].text = doc;
+			mia.save(function(e,mia){
+				Mia.publishUpdate(mia.id,mia);
+				callback(e,mia);
+			});
+		});
+		callback(true);
+	}
 }
 var downloadProjectFile = function(mia,filetype,callback){
 	if(mia[filetype].url){

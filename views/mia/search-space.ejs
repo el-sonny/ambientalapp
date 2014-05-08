@@ -1,0 +1,22 @@
+<div ng-repeat='space in mia.resumen.spaces' class='search-space'>
+  <div class='row'>
+    <div class='col-md-2'>
+      <p>¿Coordenadas?</p>
+      <input type='checkbox' checked name='space-enabled' class='space-activation-checkbox' />
+    </div>
+    <div class='col-md-2'>
+      <p>Preview</p>
+      <input type='checkbox' name='space-preview' class='map-preview-checkbox' />
+    </div>
+    <div class='col-md-6 polygons-container'>
+      <p>Poligonos</p>
+      <%- partial('polygons') -%>
+    </div>
+  </div>
+  <hr/>
+  <div class='row workspace'>
+    <pre class='col-md-12 well' ng-bind-html='initSpace(space,mia.resumen.text)'></pre>
+    <div class='points hidden'></div>
+    <div class='col-md-12 map hidden'></div>
+  </div>
+</div>

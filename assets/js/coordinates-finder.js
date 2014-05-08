@@ -1,4 +1,4 @@
-function coordinatesFinder(space,text){
+/*function coordinatesFinder(space,text){
     var offset = 0;
     this.full_text = text;
 	space.matches.forEach(function(match){
@@ -204,4 +204,4 @@ coordinatesFinder.prototype.convertUTM = function(index,callback){
 
 function highlight(text,start,end){
 	return text.slice(0,start)+"<span class='high'>"+text.slice(start,end)+"</span>"+text.slice(end);
-}
+}*/
