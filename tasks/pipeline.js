@@ -16,6 +16,7 @@
 //  to change `assets/styles/importer.less` instead.)
 var cssFilesToInject = [
   'bower_components/bootstrap/dist/css/bootstrap.min.css',
+  'bower_components/leaflet-dist/leaflet.css',
   'styles/**/*.css',
   //'bower_components/bootstrap/dist/css/bootstrap-theme.min.css',
 
@@ -30,6 +31,10 @@ var jsFilesToInject = [
   'bower_components/angular/angular.min.js',
   'bower_components/angular-sanitize/angular-sanitize.js',
   'bower_components/bootstrap/dist/js/bootstrap.min.js',
+
+  'bower_components/leaflet-dist/leaflet.js',
+  'bower_components/angular-leaflet-directive/dist/angular-leaflet-directive.min.js',
+  
   'js/socket.connection.js',
   'js/**/*.js',
 ];

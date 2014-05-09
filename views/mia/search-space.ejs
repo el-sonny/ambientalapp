@@ -1,12 +1,12 @@
-<div ng-repeat='space in mia.resumen.spaces' class='search-space'>
+<div ng-repeat='space in mia.resumen.spaces' ng-init='initSpace(space)' class='search-space'>
   <div class='row'>
     <div class='col-md-2'>
       <p>¿Coordenadas?</p>
-      <input type='checkbox' checked name='space-enabled' class='space-activation-checkbox' />
+      <input type='checkbox' checked name='space-enabled' class='space-activation-checkbox' ng-model='enabled' />
     </div>
     <div class='col-md-2'>
       <p>Preview</p>
-      <input type='checkbox' name='space-preview' class='map-preview-checkbox' />
+      <input type='checkbox' name='space-preview' class='map-preview-checkbox' ng-model='space.preview'  ng-change='showHideMap(space)'/>
     </div>
     <div class='col-md-6 polygons-container'>
       <p>Poligonos</p>
@@ -15,8 +15,10 @@
   </div>
   <hr/>
   <div class='row workspace'>
-    <pre class='col-md-12 well' ng-bind-html='initSpace(space,mia.resumen.text)'></pre>
-    <div class='points hidden'></div>
-    <div class='col-md-12 map hidden'></div>
+    <pre class='col-md-12 well' ng-show='!space.preview' ng-bind-html='space.text'></pre>
+    <div class='col-md-12 map' ng-cloak ng-show='space.preview'>
+      <leaflet height="480px" paths='space.paths' center='space.center' ></leaflet>
+    </div>
   </div>
 </div>
+<!--  -->

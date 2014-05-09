@@ -1,4 +1,4 @@
-var app = angular.module('ambientalapp', ['ngSanitize']);
+var app = angular.module('ambientalapp', ['ngSanitize','leaflet-directive']);
 app.controller('MiaCtrl', function ($scope,$sce) {
 	$scope.mia = mia;
 	//Subscribe to MIA socket
@@ -47,5 +47,7 @@ app.controller('MiaCtrl', function ($scope,$sce) {
 	$scope.fileButtonLabel = function(name){
 		return $scope.mia[name].file  && $scope.mia[name].file != 'downloading' ? "en archivo local" : 
 		$scope.mia[name].url ? "en archivo de gobierno" : "archivo no encontrado";
-	}
+	};
+
+
 });

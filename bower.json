@@ -22,6 +22,8 @@
   "dependencies": {
     "bootstrap": "~3.1.1",
     "angular": "~1.2.16",
-    "jquery": "~2.1.1"
+    "jquery": "~2.1.1",
+    "leaflet": "~0.7.2",
+    "angular-leaflet-directive": "~0.7.7"
   }
 }

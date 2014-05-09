@@ -1,20 +1,8 @@
-//var app = angular.module('ambientalapp', ['ngSanitize']);
-app.controller('coordFinderController', function ($scope,$sce) {
-	$scope.mia = mia;
-	//Subscribe to MIA socket
-	socket.get('/mia/'+mia.id);
-	//Mia message Event
-	socket.on('mia', function (msg){
-		$scope.mia = msg.data ;
-		$scope.$apply();
-	});
-	//Bypass angular sanitize
-	$scope.trustHTML = function(snippet){
-		return $sce.trustAsHtml(snippet);
-	}
-
-	$scope.initSpace = function(space,text){
+app.controller('coordFinderController', function ($scope,$sce,leafletData) {
+	$scope.initSpace = function(space){
 		var offset = 0;
+		var latlngs = [];
+		var text = mia.resumen.text;
 		space.points.forEach(function(point){
 			old_text = text;
 			text = highlight(text,point.reference.x.start+offset,point.reference.x.end+offset,'btn-primary');
@@ -22,10 +10,35 @@ app.controller('coordFinderController', function ($scope,$sce) {
 			old_text = text;
 			text = highlight(text,point.reference.y.start+offset,point.reference.y.end+offset,'btn-success');
 			offset += text.length - old_text.length;
+			latlngs.push({lat:point.lat,lng:point.lng});
 		});
-		return text.slice(space.points[0].reference.x.start-400,space.points[space.points.length-1].reference.y.end+offset+150);
+		latlngs.push({lat:space.points[0].lat,lng:space.points[0].lng});
+		space.paths = [{
+			color: '#223900',
+			weight: 1,
+			latlngs : latlngs,
+			fillColor: '#223900',
+		    type: 'polygon'
+		}];
+		space.center = {
+			lat : latlngs[0].lat,
+			lng : latlngs[0].lng,
+			zoom : 16,
 		}
-	
+		space.preview = false;
+		space.enabled = true;
+		space.text = text.slice(space.points[0].reference.x.start-400,space.points[space.points.length-1].reference.y.end+offset+150);
+	}
+	$scope.showHideMap = function(space){
+		//console.log(space.preview);
+		console.log(space.preview);
+		if (space.preview === true) {
+		    leafletData.getMap().then(function(map){
+		    	L.Util.requestAnimFrame(map.invalidateSize,map,!1,map._container);
+		        //console.log(map.invalidateSize());
+		    });
+		}
+	};
 });
 
 

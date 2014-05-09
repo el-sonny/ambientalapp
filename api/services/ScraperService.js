@@ -64,16 +64,16 @@ module.exports = {
 
 }
 var processFile = function(mia,filetype,cb){
-	//&& !mia[filetype].processed
-	if(mia[filetype].url && !mia[filetype].file){
+	//
+	if(mia[filetype].url && !mia[filetype].file && !mia[filetype].processed){
 		downloadProjectFile(mia,filetype,function(e,file){
 			extractPDF(mia,filetype,cb);
 		});
-	}else{
+	}else if(!mia[filetype].processed){
 		extractPDF(mia,filetype,cb);
-	}/*else{
+	}else{
 		cb(null,mia);
-	}*/
+	}
 }
 function extractPDF(mia,filetype,callback){
 	if(mia[filetype].file){
@@ -123,6 +123,11 @@ function extractPDF(mia,filetype,callback){
 					if(matches.length % 2){
 						point.y = result[0];
 						point.reference.y = match;
+						if(pattern.format == 'utm'){
+							var latlng = convertUTM(point);
+							point.lat = latlng.lat;
+							point.lng = latlng.lng;
+						}
 						points.push(point);
 					//ITS x
 					}else{
@@ -144,6 +149,12 @@ function extractPDF(mia,filetype,callback){
 		});
 		callback(true);
 	}
+}
+function convertUTM (point){
+	var converter = require('coordinator');
+    var fn = converter('utm', 'latlong');
+    latlong = fn(point.y, point.x,16);
+    return {lat:latlong.latitude,lng:latlong.longitude};
 }
 var downloadProjectFile = function(mia,filetype,callback){
 	if(mia[filetype].url){

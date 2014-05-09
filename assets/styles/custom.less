@@ -82,6 +82,7 @@ body {
 .coord-steps{margin:0 0 20px;}
 #parse-space{margin:20px 0;}
 #parse-space pre{font-family:monospace;}
+
 #parse-space .workspace{-webkit-transition:height 1s,-webkit-filter 1s;height:500px;}
 #parse-space .workspace:before{-webkit-transition:background-color 1s;color:rgba(0,0,0,0);content:'';}
 #parse-space .workspace.disabled{height:130px;overflow:hidden;position:relative;-webkit-filter: blur(5px);}
@@ -89,14 +90,16 @@ body {
 
 #parse-space .search-space{border-top:1px solid #eee;margin:10px 0;padding:30px 0 0;}
 #parse-space .search-space table{font-size:11px;}
-
-#parse-space .map{height:400px;}
+/*
+#parse-space pre.space-preview{display:none;}
+#parse-space .map{height:400px;display:none;}
+#parse-space .map.space-preview{display:block;}*/
 
 #parse-space .poligon-icons{margin:9px 0;}
 #parse-space .poligon-icons .glyphicon{margin-left:15px;}
 #parse-space .poligon-icons .save.saving{cursor:default;opacity:.4;}
 /*
- * Loading animation
+ * Loading animation (rotation)
  */
 .icon-animate {
   animation-name: rotateThis;
