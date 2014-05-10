@@ -35,6 +35,9 @@ app.controller('MiaCtrl', function ($scope,$sce) {
 		}
 		return _class;		
 	};
+	$scope.processStatus = function(){
+		return $scope.mia.resumen.processed && $scope.mia.estudio.processed ? true : false;
+	}
 	$scope.fileLink = function(name){
 		return $scope.mia[name].file && $scope.mia[name].file != 'downloading' ? '/'+$scope.mia[name].file : $scope.mia[name].url ? $scope.mia[name].url : '';
 	};

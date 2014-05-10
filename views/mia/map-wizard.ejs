@@ -1,10 +1,10 @@
 <% if( mia.resumen  || mia.estudio){ %>
-<ul class="nav nav-pills coord-steps">
+<!-- <ul class="nav nav-pills coord-steps">
   <li  class='active' ><a data-toggle="tab" href='#system-tasks'>Tareas de Sistema</a></li>
   <li><a data-toggle="tab" href='#parse-space' ng-class='extractCoordsDisabled()'>Extraer Coordenadas</a></li>
-</ul>
+</ul> -->
 <div class="tab-content">
-	<pre id='system-tasks' class="tab-pane active" >
+	<pre ng-show='!processStatus()' id='system-tasks' class="tab-pane active" >
 	El sistema debe completar algunas tareas antes de empezar, espere por favor.
 	-Tareas
 	--Copiar archivos
@@ -14,7 +14,7 @@
 	 |--Resumen ejecutivo <span ng-class='fileProcessStatusIcon("resumen")'></span>
 	 |--Estudio de impacto ambiental <span ng-class='fileProcessStatusIcon("estudio")'></span>
 	</pre>
-	<div id='parse-space' class="tab-pane" ng-controller='coordFinderController'>
+	<div id='parse-space'  ng-show='processStatus()' ng-controller='coordFinderController'>
 		<%- partial('search-space') -%>
 	</div>
 </div>

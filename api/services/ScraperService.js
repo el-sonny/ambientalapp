@@ -69,7 +69,7 @@ var processFile = function(mia,filetype,cb){
 		downloadProjectFile(mia,filetype,function(e,file){
 			extractPDF(mia,filetype,cb);
 		});
-	}else if(!mia[filetype].processed){
+	}else if(1){
 		extractPDF(mia,filetype,cb);
 	}else{
 		cb(null,mia);

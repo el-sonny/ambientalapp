@@ -32,17 +32,19 @@
         <dd><%- mia.status.desc %> (<%- mia.estado %>)</dd>
       </dl>
       <hr/>
-      <ul class="nav nav-pills">
+     <!--  <ul class="nav nav-pills">
         <li class="active"><a href="#documentos" data-toggle="tab">Documentos</a></li>
         <li><a href="#mapa" data-toggle="tab">Mapa</a></li>
         <li><a href="#comentarios" data-toggle="tab">Comentarios</a></li>
         <li><a href="#historial" data-toggle="tab">Historial</a></li>
-      </ul>
+      </ul> -->
       <hr/>
-      <div class="tab-content">
-        <div class="tab-pane active" id="documentos"><%- partial('documentos')%></div>
-        <div class="tab-pane" id="mapa"><%- partial('map')%></div>
-      </div>
+      <%- partial('documentos')%>
+      <%- partial('map')%>
+      <!-- <div class="tab-content">
+        <div class="tab-pane active" id="documentos"></div>
+        <div class="tab-pane" id="mapa"></div>
+      </div> -->
     </div>
 
   </div>
